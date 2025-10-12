@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class HidingPhaseController : MonoBehaviour
@@ -30,12 +32,6 @@ public class HidingPhaseController : MonoBehaviour
         
         hidingTimer += Time.deltaTime;
         
-        if (currentWall != null)
-        {
-            float fadeProgress = hidingTimer / hidingDuration;
-            currentWall.SetAlpha(fadeProgress);
-        }
-        
         if (hidingTimer >= hidingDuration)
         {
             CheckHidingResult();
@@ -49,12 +45,22 @@ public class HidingPhaseController : MonoBehaviour
             if (wallGenerator != null)
             {
                 walls = wallGenerator.GenerateWalls();
+                
+                foreach (var wall in walls)
+                {
+                    wall.SetAlpha(0f);
+                }
+            }
+            else
+            {
+                Debug.LogError("No wall generator assigned!");
+                return;
             }
         }
         
         if (currentWallIndex >= walls.Length)
         {
-            Debug.Log("All walls complete");
+            Debug.Log("All walls completed!");
             return;
         }
         
@@ -62,13 +68,20 @@ public class HidingPhaseController : MonoBehaviour
         hidingTimer = 0f;
         currentWall = walls[currentWallIndex];
         
+        foreach (var wall in walls)
+        {
+            wall.SetAlpha(0f);
+        }
+        
+        currentWall.SetAlpha(1f);
+        
         foreach (var limb in limbs)
         {
             limb.EnableHidingMode();
         }
         
         OnHidingStart?.Invoke(currentWall);
-        Debug.Log($"Hiding phase started. Wall: {currentWallIndex + 1}");
+        Debug.Log($"Hiding phase started! Wall {currentWallIndex + 1}");
     }
 
     public void StopHiding()
@@ -80,7 +93,7 @@ public class HidingPhaseController : MonoBehaviour
             limb.DisableHidingMode();
         }
         
-        Debug.Log("Hiding phase stopped");
+        Debug.Log("Hiding phase stopped!");
     }
 
     void CheckHidingResult()
@@ -91,7 +104,7 @@ public class HidingPhaseController : MonoBehaviour
         
         if (success)
         {
-            Debug.Log("Successfully hid");
+            Debug.Log("Successfully hid!");
             OnHidingSuccess?.Invoke();
             currentWallIndex++;
             
@@ -99,12 +112,14 @@ public class HidingPhaseController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Failed");
+            Debug.Log("Failed to hide! Retrying...");
             OnHidingFail?.Invoke();
             
             ResetLimbs();
+            Invoke(nameof(StartHiding), 0.5f);
         }
     }
+
 
     void ResetLimbs()
     {

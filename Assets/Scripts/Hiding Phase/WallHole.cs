@@ -12,13 +12,6 @@ public class WallHole : MonoBehaviour
     [Header("Tolerance")]
     public float angleTolerance = 10f;
 
-    private SpriteRenderer spriteRenderer;
-
-    void Awake()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
     public bool CheckMatch(PlayerLimbController[] limbs)
     {
         foreach (var limb in limbs)
@@ -28,7 +21,7 @@ public class WallHole : MonoBehaviour
             
             if (Mathf.Abs(limbAngle - targetAngle) > angleTolerance)
             {
-                Debug.Log($"{limb.limbName} mismatch. Target: {targetAngle}, Current: {limbAngle}");
+                Debug.Log($"{limb.limbName} mismatch! Target: {targetAngle}, Current: {limbAngle}");
                 return false;
             }
         }
@@ -51,22 +44,12 @@ public class WallHole : MonoBehaviour
 
     public void SetAlpha(float alpha)
     {
-        if (spriteRenderer != null)
-        {
-            Color color = spriteRenderer.color;
-            color.a = Mathf.Clamp01(alpha);
-            spriteRenderer.color = color;
-        }
-        
         SpriteRenderer[] childRenderers = GetComponentsInChildren<SpriteRenderer>();
         foreach (var childRenderer in childRenderers)
         {
-            if (childRenderer != spriteRenderer)
-            {
-                Color color = childRenderer.color;
-                color.a = Mathf.Clamp01(alpha);
-                childRenderer.color = color;
-            }
+            Color color = childRenderer.color;
+            color.a = Mathf.Clamp01(alpha);
+            childRenderer.color = color;
         }
     }
 }

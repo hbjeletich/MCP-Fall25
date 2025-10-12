@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerLimbController : MonoBehaviour
@@ -10,7 +12,7 @@ public class PlayerLimbController : MonoBehaviour
     public float maxAngle = 45f;
     
     [Header("Input Axes")]
-    public string horizontalAxis = "Horizontal"; // will be changed per limb
+    public string horizontalAxis = "Horizontal"; // Will map to joystick
     
     private bool isLocked = false;
     private bool hidingModeEnabled = false;
@@ -22,6 +24,7 @@ public class PlayerLimbController : MonoBehaviour
         
         if (!isLocked)
         {
+            // Get joystick input (for now using keyboard axes)
             float input = Input.GetAxis(horizontalAxis);
             
             if (Mathf.Abs(input) > 0.1f) // Deadzone
