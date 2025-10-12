@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightArm
-  inputKey: 100
+  limbPlayer: 0
   promptPanel: {fileID: 34590484}
   buttonImage: {fileID: 249950200}
   buttonText: {fileID: 339429598}
@@ -790,7 +790,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: LeftLeg
-  inputKey: 102
+  limbPlayer: 0
   promptPanel: {fileID: 461338921}
   buttonImage: {fileID: 1012512845}
   buttonText: {fileID: 1819241906}
@@ -1496,7 +1496,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: LeftArm
-  inputKey: 115
+  limbPlayer: 0
   promptPanel: {fileID: 664772313}
   buttonImage: {fileID: 834576284}
   buttonText: {fileID: 980360515}
@@ -3306,11 +3306,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightLeg
-  lockKey: 103
+  limbPlayer: 0
   rotationSpeed: 60
   minAngle: 0
   maxAngle: 45
-  horizontalAxis: Horizontal
 --- !u!1 &1439649711
 GameObject:
   m_ObjectHideFlags: 0
@@ -3872,6 +3871,107 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1667826878}
   m_CullTransparentMesh: 1
+--- !u!1 &1674868378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1674868381}
+  - component: {fileID: 1674868380}
+  - component: {fileID: 1674868379}
+  m_Layer: 0
+  m_Name: Input Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1674868379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674868378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 621567455fd1c4ceb811cc8a00b6a1a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NotificationBehavior: 0
+  m_MaxPlayerCount: 5
+  m_AllowJoining: 1
+  m_JoinBehavior: 0
+  m_PlayerJoinedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_PlayerLeftEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_JoinAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 9dd8fe24-6b2a-4d9a-ba8a-a56bc9ff436d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_PlayerPrefab: {fileID: 0}
+  m_SplitScreen: 0
+  m_MaintainAspectRatioInSplitScreen: 0
+  m_FixedNumberOfSplitScreens: -1
+  m_SplitScreenRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!114 &1674868380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674868378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2a2c1f562104079b39e1dcce6797d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputMode: 0
+  playerInputs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  leftArmLockKey: 97
+  rightArmLockKey: 115
+  leftLegLockKey: 119
+  rightLegLockKey: 100
+  headLockKey: 102
+--- !u!4 &1674868381
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674868378}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1176.5983, y: 710.6308, z: -4.8761597}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1770842662
 GameObject:
   m_ObjectHideFlags: 0
@@ -4632,11 +4732,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: LeftLeg
-  lockKey: 102
+  limbPlayer: 0
   rotationSpeed: 60
   minAngle: -45
   maxAngle: 0
-  horizontalAxis: Horizontal
 --- !u!1 &1847127549
 GameObject:
   m_ObjectHideFlags: 0
@@ -4683,11 +4782,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightArm
-  lockKey: 100
+  limbPlayer: 0
   rotationSpeed: 60
   minAngle: -100
   maxAngle: -30
-  horizontalAxis: Horizontal
 --- !u!1 &1855512393
 GameObject:
   m_ObjectHideFlags: 0
@@ -4734,11 +4832,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: LeftArm
-  lockKey: 115
+  limbPlayer: 0
   rotationSpeed: 60
   minAngle: 30
   maxAngle: 100
-  horizontalAxis: Horizontal
 --- !u!1 &1890351529
 GameObject:
   m_ObjectHideFlags: 0
@@ -4821,11 +4918,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: Head
-  lockKey: 97
+  limbPlayer: 0
   rotationSpeed: 60
   minAngle: -45
   maxAngle: 45
-  horizontalAxis: Horizontal
 --- !u!1 &1945137884
 GameObject:
   m_ObjectHideFlags: 0
@@ -5040,7 +5136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightLeg
-  inputKey: 103
+  limbPlayer: 0
   promptPanel: {fileID: 1987441375}
   buttonImage: {fileID: 1793127342}
   buttonText: {fileID: 1667826880}
@@ -5519,3 +5615,4 @@ SceneRoots:
   - {fileID: 1199442360}
   - {fileID: 1314075341}
   - {fileID: 1336653049}
+  - {fileID: 1674868381}

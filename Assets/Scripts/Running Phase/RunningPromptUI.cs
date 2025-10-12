@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,14 +8,14 @@ public class RunningPromptUI : MonoBehaviour
 {
     [Header("Player Settings")]
     public string limbName; // "LeftLeg", "RightLeg", "LeftArm", "RightArm"
-    public KeyCode inputKey;
+    public InputManager.LimbPlayer limbPlayer;
     
     [Header("UI References")]
     public GameObject promptPanel;
     public Image buttonImage;
-    public TextMeshProUGUI buttonText; 
+    public TextMeshProUGUI buttonText;
     public Slider timerSlider;
-    public TextMeshProUGUI limbLabel; 
+    public TextMeshProUGUI limbLabel;
     
     [Header("Colors")]
     public Color idleColor = Color.gray;
@@ -22,6 +24,7 @@ public class RunningPromptUI : MonoBehaviour
     public Color missColor = Color.red;
     
     private RunningPhaseController runningController;
+    private InputManager inputManager;
     private bool isActive = false;
     private float promptStartTime;
     private float promptEndTime;
@@ -29,6 +32,7 @@ public class RunningPromptUI : MonoBehaviour
     void Start()
     {
         runningController = FindObjectOfType<RunningPhaseController>();
+        inputManager = InputManager.Instance;
         
         if (runningController != null)
         {
@@ -41,11 +45,7 @@ public class RunningPromptUI : MonoBehaviour
             limbLabel.text = limbName.ToUpper();
         }
         
-        if (buttonText != null)
-        {
-            buttonText.text = inputKey.ToString();
-        }
-        
+        UpdateButtonText();
         SetInactive();
     }
 
@@ -60,7 +60,8 @@ public class RunningPromptUI : MonoBehaviour
 
     void Update()
     {
-        if (isActive && Input.GetKeyDown(inputKey))
+        // check for input from InputManager
+        if (isActive && inputManager != null && inputManager.GetLimbLockButtonDown(limbPlayer))
         {
             OnInputPressed();
         }
@@ -70,6 +71,36 @@ public class RunningPromptUI : MonoBehaviour
             float elapsed = Time.time - promptStartTime;
             float duration = promptEndTime - promptStartTime;
             timerSlider.value = elapsed / duration;
+        }
+    }
+
+    void UpdateButtonText()
+    {
+        if (buttonText != null && inputManager != null)
+        {
+            if (inputManager.inputMode == InputManager.InputMode.Debug)
+            {
+                string keyLabel = GetDebugKeyLabel();
+                buttonText.text = keyLabel;
+            }
+            else
+            {
+                // Show controller button (generic)
+                buttonText.text = "A";
+            }
+        }
+    }
+
+    string GetDebugKeyLabel()
+    {
+        switch (limbPlayer)
+        {
+            case InputManager.LimbPlayer.LeftArm: return "Q";
+            case InputManager.LimbPlayer.RightArm: return "W";
+            case InputManager.LimbPlayer.LeftLeg: return "A";
+            case InputManager.LimbPlayer.RightLeg: return "S";
+            case InputManager.LimbPlayer.Head: return "SPACE";
+            default: return "?";
         }
     }
 
@@ -90,7 +121,7 @@ public class RunningPromptUI : MonoBehaviour
         
         isActive = false;
         ShowMiss();
-        Invoke(nameof(SetInactive), 0.5f); // miss feedback
+        Invoke(nameof(SetInactive), 0.5f);
     }
 
     void OnInputPressed()
@@ -102,7 +133,7 @@ public class RunningPromptUI : MonoBehaviour
         
         isActive = false;
         ShowSuccess();
-        Invoke(nameof(SetInactive), 0.3f); // success feedback
+        Invoke(nameof(SetInactive), 0.3f);
     }
 
     void SetActive()
@@ -114,7 +145,7 @@ public class RunningPromptUI : MonoBehaviour
 
     void SetInactive()
     {
-        if (promptPanel != null) promptPanel.SetActive(true); // dimmed
+        if (promptPanel != null) promptPanel.SetActive(true);
         if (buttonImage != null) buttonImage.color = idleColor;
         if (timerSlider != null) timerSlider.value = 0f;
     }
