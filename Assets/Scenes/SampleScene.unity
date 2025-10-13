@@ -3855,7 +3855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightLeg
-  limbPlayer: 0
+  limbPlayer: 3
   rotationSpeed: 60
   minAngle: 0
   maxAngle: 45
@@ -5450,7 +5450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: LeftLeg
-  limbPlayer: 0
+  limbPlayer: 2
   rotationSpeed: 60
   minAngle: -45
   maxAngle: 0
@@ -5500,7 +5500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightArm
-  limbPlayer: 0
+  limbPlayer: 1
   rotationSpeed: 60
   minAngle: -100
   maxAngle: -30
@@ -5670,7 +5670,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: Head
-  limbPlayer: 0
+  limbPlayer: 4
   rotationSpeed: 60
   minAngle: -45
   maxAngle: 45
@@ -5738,11 +5738,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbs:
-  - {fileID: 1924928980}
   - {fileID: 1855512395}
   - {fileID: 1847127551}
   - {fileID: 1827866620}
   - {fileID: 1433459786}
+  - {fileID: 1924928980}
   wallGenerator: {fileID: 1336653048}
   hidingDuration: 10
 --- !u!4 &1945137886

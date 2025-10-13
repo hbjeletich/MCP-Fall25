@@ -126,7 +126,7 @@ public class InputManager : MonoBehaviour
     private float GetControllerHorizontalAxis(LimbPlayer limb)
     {
         int playerIndex = (int)limb;
-        
+
         if (playerIndex < playerInputs.Length && playerInputs[playerIndex] != null)
         {
             try
@@ -142,35 +142,42 @@ public class InputManager : MonoBehaviour
                 // Fall through
             }
         }
-        
-        if (Gamepad.all.Count > playerIndex)
+
+        // Try gamepad first
+        if (playerIndex < Gamepad.all.Count)
         {
             return Gamepad.all[playerIndex].leftStick.x.ReadValue();
         }
-        
-        if (useJoystickFallback && Joystick.all.Count > playerIndex)
+
+        // Fall back to joystick with offset
+        if (useJoystickFallback)
         {
-            var joystick = Joystick.all[playerIndex];
-            
-            if (joystick.stick != null)
+            int joystickIndex = playerIndex - Gamepad.all.Count;
+            if (joystickIndex >= 0 && joystickIndex < Joystick.all.Count)
             {
-                float value = joystick.stick.x.ReadValue();
-                return value;
-            }
-            
-            if (joystick.TryGetChildControl<AxisControl>("x") is AxisControl xAxis)
-            {
-                return xAxis.ReadValue();
+                var joystick = Joystick.all[joystickIndex];
+
+                if (joystick.stick != null)
+                {
+                    return joystick.stick.x.ReadValue();
+                }
+
+                if (joystick.TryGetChildControl<AxisControl>("x") is AxisControl xAxis)
+                {
+                    return xAxis.ReadValue();
+                }
+
+
             }
         }
-        
+
         return 0f;
     }
 
     private bool GetControllerLockButton(LimbPlayer limb)
     {
         int playerIndex = (int)limb;
-        
+
         if (playerIndex < playerInputs.Length && playerInputs[playerIndex] != null)
         {
             try
@@ -186,42 +193,48 @@ public class InputManager : MonoBehaviour
                 // Fall through
             }
         }
-        
-        if (Gamepad.all.Count > playerIndex)
+
+        // Try gamepad first
+        if (playerIndex < Gamepad.all.Count)
         {
             return Gamepad.all[playerIndex].buttonSouth.wasPressedThisFrame;
         }
-        
-        if (useJoystickFallback && Joystick.all.Count > playerIndex)
+
+        // Fall back to joystick with offset
+        if (useJoystickFallback)
         {
-            var joystick = Joystick.all[playerIndex];
-            
-            if (joystick.TryGetChildControl<ButtonControl>("trigger") is ButtonControl trigger)
+            int joystickIndex = playerIndex - Gamepad.all.Count;
+            if (joystickIndex >= 0 && joystickIndex < Joystick.all.Count)
             {
-                if (trigger.wasPressedThisFrame) return true;
-            }
-            
-            if (joystick.TryGetChildControl<ButtonControl>("button0") is ButtonControl button0)
-            {
-                if (button0.wasPressedThisFrame) return true;
-            }
-            
-            if (joystick.TryGetChildControl<ButtonControl>("button1") is ButtonControl button1)
-            {
-                if (button1.wasPressedThisFrame) return true;
-            }
-            
-            if (joystick.TryGetChildControl<ButtonControl>("button2") is ButtonControl button2)
-            {
-                if (button2.wasPressedThisFrame) return true;
-            }
-            
-            if (joystick.TryGetChildControl<ButtonControl>("button3") is ButtonControl button3)
-            {
-                if (button3.wasPressedThisFrame) return true;
+                var joystick = Joystick.all[joystickIndex];
+
+                if (joystick.TryGetChildControl<ButtonControl>("trigger") is ButtonControl trigger)
+                {
+                    if (trigger.wasPressedThisFrame) return true;
+                }
+
+                if (joystick.TryGetChildControl<ButtonControl>("button0") is ButtonControl button0)
+                {
+                    if (button0.wasPressedThisFrame) return true;
+                }
+
+                if (joystick.TryGetChildControl<ButtonControl>("button1") is ButtonControl button1)
+                {
+                    if (button1.wasPressedThisFrame) return true;
+                }
+
+                if (joystick.TryGetChildControl<ButtonControl>("button2") is ButtonControl button2)
+                {
+                    if (button2.wasPressedThisFrame) return true;
+                }
+
+                if (joystick.TryGetChildControl<ButtonControl>("button3") is ButtonControl button3)
+                {
+                    if (button3.wasPressedThisFrame) return true;
+                }
             }
         }
-        
+
         return false;
     }
 
@@ -234,24 +247,28 @@ public class InputManager : MonoBehaviour
     public bool IsControllerConnected(int playerIndex)
     {
         if (inputMode == InputMode.Debug) return true;
-        
-        if (playerIndex < playerInputs.Length && 
-            playerInputs[playerIndex] != null && 
+
+        if (playerIndex < playerInputs.Length &&
+            playerInputs[playerIndex] != null &&
             playerInputs[playerIndex].devices.Count > 0)
         {
             return true;
         }
-        
-        if (Gamepad.all.Count > playerIndex)
+
+        if (playerIndex < Gamepad.all.Count && Gamepad.all[playerIndex] != null)
         {
             return true;
         }
-        
-        if (useJoystickFallback && Joystick.all.Count > playerIndex)
+
+        if (useJoystickFallback)
         {
-            return true;
+            int joystickIndex = playerIndex - Gamepad.all.Count;
+            if (joystickIndex >= 0 && joystickIndex < Joystick.all.Count && Joystick.all[joystickIndex] != null)
+            {
+                return true;
+            }
         }
-        
+
         return false;
     }
 
