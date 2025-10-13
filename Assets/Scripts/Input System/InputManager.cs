@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.LowLevel;
 
 public class InputManager : MonoBehaviour
 {
@@ -11,19 +13,25 @@ public class InputManager : MonoBehaviour
     [Header("Player Assignments")]
     public PlayerInput[] playerInputs = new PlayerInput[5];
     
+    [Header("Device Detection")]
+    public bool useJoystickFallback = true;
+    
     [Header("Debug Key Mappings")]
-    public KeyCode leftArmLockKey;
-    public KeyCode rightArmLockKey;
-    public KeyCode leftLegLockKey;
-    public KeyCode rightLegLockKey;
-    public KeyCode headLockKey;
+    public KeyCode leftArmLockKey = KeyCode.Q;
+    public KeyCode rightArmLockKey = KeyCode.W;
+    public KeyCode leftLegLockKey = KeyCode.A;
+    public KeyCode rightLegLockKey = KeyCode.S;
+    public KeyCode headLockKey = KeyCode.Space;
+    
+    [Header("Debug Info")]
+    public bool showDetailedDebug = true;
     
     private static InputManager instance;
     
     public enum InputMode
     {
-        Debug,      // Keyboard controls
-        Game        // 5 controllers
+        Debug,
+        Game
     }
     
     public enum LimbPlayer
@@ -82,7 +90,7 @@ public class InputManager : MonoBehaviour
         switch (limb)
         {
             case LimbPlayer.LeftArm:
-                return Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
+                return Input.GetAxis("Horizontal");
             case LimbPlayer.RightArm:
                 return Input.GetKey(KeyCode.J) ? -1f : Input.GetKey(KeyCode.L) ? 1f : 0f;
             case LimbPlayer.LeftLeg:
@@ -115,15 +123,45 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    // Game mode - controller inputs
     private float GetControllerHorizontalAxis(LimbPlayer limb)
     {
         int playerIndex = (int)limb;
         
         if (playerIndex < playerInputs.Length && playerInputs[playerIndex] != null)
         {
-            // read from the controller's left stick X axis
-            return playerInputs[playerIndex].actions["Move"].ReadValue<Vector2>().x;
+            try
+            {
+                var moveAction = playerInputs[playerIndex].actions["Move"];
+                if (moveAction != null)
+                {
+                    return moveAction.ReadValue<Vector2>().x;
+                }
+            }
+            catch
+            {
+                // Fall through
+            }
+        }
+        
+        if (Gamepad.all.Count > playerIndex)
+        {
+            return Gamepad.all[playerIndex].leftStick.x.ReadValue();
+        }
+        
+        if (useJoystickFallback && Joystick.all.Count > playerIndex)
+        {
+            var joystick = Joystick.all[playerIndex];
+            
+            if (joystick.stick != null)
+            {
+                float value = joystick.stick.x.ReadValue();
+                return value;
+            }
+            
+            if (joystick.TryGetChildControl<AxisControl>("x") is AxisControl xAxis)
+            {
+                return xAxis.ReadValue();
+            }
         }
         
         return 0f;
@@ -135,8 +173,53 @@ public class InputManager : MonoBehaviour
         
         if (playerIndex < playerInputs.Length && playerInputs[playerIndex] != null)
         {
-            // read the "Lock" action (mapped to a button like South/A button)
-            return playerInputs[playerIndex].actions["Lock"].WasPressedThisFrame();
+            try
+            {
+                var lockAction = playerInputs[playerIndex].actions["Lock"];
+                if (lockAction != null)
+                {
+                    return lockAction.WasPressedThisFrame();
+                }
+            }
+            catch
+            {
+                // Fall through
+            }
+        }
+        
+        if (Gamepad.all.Count > playerIndex)
+        {
+            return Gamepad.all[playerIndex].buttonSouth.wasPressedThisFrame;
+        }
+        
+        if (useJoystickFallback && Joystick.all.Count > playerIndex)
+        {
+            var joystick = Joystick.all[playerIndex];
+            
+            if (joystick.TryGetChildControl<ButtonControl>("trigger") is ButtonControl trigger)
+            {
+                if (trigger.wasPressedThisFrame) return true;
+            }
+            
+            if (joystick.TryGetChildControl<ButtonControl>("button0") is ButtonControl button0)
+            {
+                if (button0.wasPressedThisFrame) return true;
+            }
+            
+            if (joystick.TryGetChildControl<ButtonControl>("button1") is ButtonControl button1)
+            {
+                if (button1.wasPressedThisFrame) return true;
+            }
+            
+            if (joystick.TryGetChildControl<ButtonControl>("button2") is ButtonControl button2)
+            {
+                if (button2.wasPressedThisFrame) return true;
+            }
+            
+            if (joystick.TryGetChildControl<ButtonControl>("button3") is ButtonControl button3)
+            {
+                if (button3.wasPressedThisFrame) return true;
+            }
         }
         
         return false;
@@ -148,32 +231,66 @@ public class InputManager : MonoBehaviour
         Debug.Log($"Input mode changed to: {mode}");
     }
 
-    // Check if a specific controller is connected
     public bool IsControllerConnected(int playerIndex)
     {
-        if (inputMode == InputMode.Debug) return true; // Always true in debug mode
+        if (inputMode == InputMode.Debug) return true;
         
-        return playerIndex < playerInputs.Length && 
-               playerInputs[playerIndex] != null && 
-               playerInputs[playerIndex].devices.Count > 0;
+        if (playerIndex < playerInputs.Length && 
+            playerInputs[playerIndex] != null && 
+            playerInputs[playerIndex].devices.Count > 0)
+        {
+            return true;
+        }
+        
+        if (Gamepad.all.Count > playerIndex)
+        {
+            return true;
+        }
+        
+        if (useJoystickFallback && Joystick.all.Count > playerIndex)
+        {
+            return true;
+        }
+        
+        return false;
     }
 
     void OnGUI()
     {
+        GUILayout.BeginArea(new Rect(10, 10, 500, 600));
+        
+        GUILayout.Label("=== INPUT MANAGER DEBUG ===");
+        GUILayout.Label($"Current Mode: {inputMode}");
+        GUILayout.Label($"Total Gamepads: {Gamepad.all.Count}");
+        GUILayout.Label($"Total Joysticks: {Joystick.all.Count}");
+        
+        GUILayout.Space(10);
+        
         if (inputMode == InputMode.Game)
         {
-            GUILayout.BeginArea(new Rect(10, 10, 300, 200));
-            GUILayout.Label("Controller Status:");
+            GUILayout.Label("=== CONTROLLER STATUS ===");
             
             for (int i = 0; i < 5; i++)
             {
                 bool connected = IsControllerConnected(i);
-                string status = connected ? "✓ Connected" : "✗ Not Connected";
+                string status = connected ? "Connected" : "Not Connected";
                 string limbName = ((LimbPlayer)i).ToString();
-                GUILayout.Label($"{limbName}: {status}");
+                GUILayout.Label($"{limbName} (Index {i}): {status}");
+                
+                if (connected || Gamepad.all.Count > i || Joystick.all.Count > i)
+                {
+                    float axis = GetControllerHorizontalAxis((LimbPlayer)i);
+                    bool button = GetControllerLockButton((LimbPlayer)i);
+                    GUILayout.Label($"  Axis: {axis:F2} | Button: {button}");
+                }
             }
-            
-            GUILayout.EndArea();
         }
+        else
+        {
+            GUILayout.Label("=== DEBUG MODE ===");
+            GUILayout.Label("Using Keyboard Controls");
+        }
+        
+        GUILayout.EndArea();
     }
 }
