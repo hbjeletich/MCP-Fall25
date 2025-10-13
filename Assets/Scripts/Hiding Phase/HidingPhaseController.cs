@@ -116,7 +116,7 @@ public class HidingPhaseController : MonoBehaviour
             OnHidingFail?.Invoke();
             
             ResetLimbs();
-            Invoke(nameof(StartHiding), 0.5f);
+            //Invoke(nameof(StartHiding), 0.5f);
         }
     }
 

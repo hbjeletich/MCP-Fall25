@@ -7,7 +7,7 @@ public class GameStateManager : MonoBehaviour
     [Header("Phase Controllers")]
     public RunningPhaseController runningPhaseController;
     public HidingPhaseController hidingPhaseController;
-    // and then QTE controller
+    public QTEController qteController;
     
     [Header("Game Settings")]
     public float runningPhaseDuration = 15f; 
@@ -19,6 +19,7 @@ public class GameStateManager : MonoBehaviour
     public float difficultyMultiplier = 1.1f;
     
     private GameState currentState = GameState.Idle;
+    private GameState previousState = GameState.Idle;
     private int wallsCompleted = 0;
     private float currentDifficulty = 1f;
     
@@ -47,6 +48,12 @@ public class GameStateManager : MonoBehaviour
             hidingPhaseController.OnHidingFail += OnHidingFail;
         }
         
+        if (qteController != null)
+        {
+            qteController.OnQTESuccess += OnQTESuccess;
+            qteController.OnQTEFail += OnQTEFail;
+        }
+        
         // FOR NOW auto start
         StartGame();
     }
@@ -57,6 +64,12 @@ public class GameStateManager : MonoBehaviour
         {
             hidingPhaseController.OnHidingSuccess -= OnHidingSuccess;
             hidingPhaseController.OnHidingFail -= OnHidingFail;
+        }
+        
+        if (qteController != null)
+        {
+            qteController.OnQTESuccess -= OnQTESuccess;
+            qteController.OnQTEFail -= OnQTEFail;
         }
     }
 
@@ -71,6 +84,7 @@ public class GameStateManager : MonoBehaviour
     {
         ExitState(currentState);
         
+        previousState = currentState;
         currentState = newState;
         Debug.Log($"State changed to: {newState}");
         
@@ -95,6 +109,9 @@ public class GameStateManager : MonoBehaviour
                 {
                     hidingPhaseController.StopHiding();
                 }
+                break;
+            case GameState.QTE:
+            // nothing special for QTE
                 break;
         }
     }
@@ -142,6 +159,10 @@ public class GameStateManager : MonoBehaviour
             
             StartCoroutine(RunningPhaseTimer());
         }
+        else
+        {
+            Debug.LogError("RunningPhaseController not assigned!");
+        }
     }
 
     IEnumerator RunningPhaseTimer()
@@ -160,7 +181,6 @@ public class GameStateManager : MonoBehaviour
         {
             hidingPhaseController.StartHiding();
             // hiding phase handles its own timer and completion
-            // which is not good game design sorry!
         }
         else
         {
@@ -170,17 +190,28 @@ public class GameStateManager : MonoBehaviour
 
     void StartQTEPhase()
     {
-        Debug.Log("QTE Phase - Not yet implemented!");
-        StartCoroutine(QTEPlaceholder());
+        if (qteController != null)
+        {
+            qteController.BeginQTE();
+        }
+        else
+        {
+            Debug.LogError("QTEController not assigned!");
+        }
     }
 
-    IEnumerator QTEPlaceholder()
+    void OnQTESuccess()
     {
-        yield return new WaitForSeconds(2f);
-        
-        // for now, just continue the cycle
+        Debug.Log("QTE Success!");
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
+    }
+    
+    void OnQTEFail()
+    {
+        Debug.Log("QTE Failed! Retrying...");
+        // retry QTE
+        ChangeState(GameState.QTE);
     }
 
     IEnumerator TransitionCoroutine()
@@ -189,18 +220,22 @@ public class GameStateManager : MonoBehaviour
         
         if (currentState == GameState.Transition)
         {
-            // If coming from running, go to hiding
-            // If coming from QTE, go back to running
-            // For now, simple logic:
-            if (hidingPhaseController != null && hidingPhaseController.IsHiding())
+            // Running → Hiding → QTE → Running
+            if (previousState == GameState.Running)
             {
-                // Was hiding, now go to QTE (or back to running for now)
+                ChangeState(GameState.Hiding);
+            }
+            else if (previousState == GameState.QTE)
+            {
                 ChangeState(GameState.Running);
+            }
+            else if (previousState == GameState.Hiding)
+            {
+                ChangeState(GameState.QTE);
             }
             else
             {
-                // Was running, now go to hiding
-                ChangeState(GameState.Hiding);
+                ChangeState(GameState.Running);
             }
         }
     }
@@ -210,23 +245,15 @@ public class GameStateManager : MonoBehaviour
         Debug.Log("Hiding phase succeeded!");
         wallsCompleted++;
         
-        // check win condition
-        if (wallsCompleted >= totalWallsToWin)
-        {
-            ChangeState(GameState.Victory);
-        }
-        else
-        {
-            // continue to QTE phase
-            IncreaseDifficulty();
-            ChangeState(GameState.QTE);
-        }
+        IncreaseDifficulty();
+        ChangeState(GameState.Transition);
     }
 
     void OnHidingFail()
     {
         Debug.Log("Hiding phase failed! Retrying...");
-        
+        IncreaseDifficulty();
+        ChangeState(GameState.Transition);
         // could implement lives/game over here
     }
 
@@ -241,11 +268,12 @@ public class GameStateManager : MonoBehaviour
 
     void HandleGameOver(bool won)
     {
+        // currently no game over it is infinite whoops
         Debug.Log(won ? "VICTORY!" : "GAME OVER!");
         OnGameOver?.Invoke(won);
     }
 
-    // Public getters for UI
+    // getters for UI
     public GameState GetCurrentState()
     {
         return currentState;
@@ -266,7 +294,7 @@ public class GameStateManager : MonoBehaviour
         return currentDifficulty;
     }
 
-    // Public methods for external control
+    // external methods
     public void RestartGame()
     {
         StartGame();
