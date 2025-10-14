@@ -18,18 +18,27 @@ public class RunningPhaseController : MonoBehaviour
     public float speedBonusMultiplier = 1.2f;
     public float speedPenaltyMultiplier = 0.8f;
 
+    [Header("Wall Selection")]
+    public int numberOfWalls = 3;
+    public int selectedWallIndex = 0;
+    public float wallSelectionCooldown = 0.2f;
+
     private InputManager inputManager;
     private float nextPromptTime;
     private float currentPromptInterval;
     private bool isRunning = false;
     private string currentPromptLimb = "";
     private float currentPromptStartTime;
+    private float lastWallSelectionTime = 0f;
 
     public delegate void OnPromptEvent(string limbName, float windowEndTime);
     public event OnPromptEvent OnPromptShown;
 
     public delegate void OnPromptEndEvent(string limbName);
     public event OnPromptEndEvent OnPromptExpired;
+
+    public delegate void OnWallSelectionChangeEvent(int wallIndex);
+    public event OnWallSelectionChangeEvent OnWallSelectionChange;
 
     void Start()
     {
@@ -45,6 +54,11 @@ public class RunningPhaseController : MonoBehaviour
         if (!isRunning) return;
 
         currentPromptInterval = Mathf.Max(0.5f, currentPromptInterval - (difficultyIncreaseRate * Time.deltaTime));
+
+        // Check head player input for wall selection
+        CheckHeadInput();
+
+        // Check limb inputs for rhythm game
         if (currentPromptLimb != "")
         {
             CheckPlayerInputs();
@@ -61,10 +75,44 @@ public class RunningPhaseController : MonoBehaviour
         }
     }
 
+    void CheckHeadInput()
+    {
+        if (inputManager == null) return;
+        if (Time.time - lastWallSelectionTime < wallSelectionCooldown) return;
+
+        float headInput = inputManager.GetLimbHorizontalAxis(InputManager.LimbPlayer.Head);
+
+        // Left input - previous wall
+        if (headInput < -0.5f)
+        {
+            selectedWallIndex--;
+            if (selectedWallIndex < 0)
+            {
+                selectedWallIndex = numberOfWalls - 1; // wrap around
+            }
+            lastWallSelectionTime = Time.time;
+            OnWallSelectionChange?.Invoke(selectedWallIndex);
+            Debug.Log($"Head selected wall: {selectedWallIndex}");
+        }
+        // Right input - next wall
+        else if (headInput > 0.5f)
+        {
+            selectedWallIndex++;
+            if (selectedWallIndex >= numberOfWalls)
+            {
+                selectedWallIndex = 0; // wrap around
+            }
+            lastWallSelectionTime = Time.time;
+            OnWallSelectionChange?.Invoke(selectedWallIndex);
+            Debug.Log($"Head selected wall: {selectedWallIndex}");
+        }
+    }
+
     void CheckPlayerInputs()
     {
         if (inputManager == null) return;
 
+        // Check each limb to see if it pressed (0-3, skip head)
         for (int i = 0; i < 4; i++)
         {
             InputManager.LimbPlayer limb = (InputManager.LimbPlayer)i;
@@ -140,6 +188,7 @@ public class RunningPhaseController : MonoBehaviour
         currentSpeed = baseSpeed;
         currentPatternIndex = 0;
         currentPromptLimb = "";
+        selectedWallIndex = 0;
         nextPromptTime = Time.time + 1f;
         Debug.Log("Running phase started!");
     }
@@ -159,5 +208,10 @@ public class RunningPhaseController : MonoBehaviour
     public bool IsRunning()
     {
         return isRunning;
+    }
+
+    public int GetSelectedWallIndex()
+    {
+        return selectedWallIndex;
     }
 }

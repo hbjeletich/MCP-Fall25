@@ -7,6 +7,7 @@ public class GameStateManager : MonoBehaviour
     [Header("Phase Controllers")]
     public RunningPhaseController runningPhaseController;
     public HidingPhaseController hidingPhaseController;
+    public WallSelectionUI wallSelectionUI;
     public QTEController qteController;
     
     [Header("Game Settings")]
@@ -53,7 +54,12 @@ public class GameStateManager : MonoBehaviour
             qteController.OnQTESuccess += OnQTESuccess;
             qteController.OnQTEFail += OnQTEFail;
         }
-        
+
+        if (wallSelectionUI != null)
+        {
+            wallSelectionUI.SetVisible(false);
+        }
+
         // FOR NOW auto start
         StartGame();
     }
@@ -102,6 +108,10 @@ public class GameStateManager : MonoBehaviour
                 {
                     runningPhaseController.StopRunning();
                 }
+                if (wallSelectionUI != null)
+                {
+                    wallSelectionUI.SetVisible(false);
+                }
                 break;
                 
             case GameState.Hiding:
@@ -121,6 +131,10 @@ public class GameStateManager : MonoBehaviour
         switch (state)
         {
             case GameState.Running:
+                if (wallSelectionUI != null)
+                {
+                    wallSelectionUI.SetVisible(true);
+                }
                 StartRunningPhase();
                 break;
                 
@@ -206,10 +220,16 @@ public class GameStateManager : MonoBehaviour
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
     }
-    
-    void OnQTEFail()
+
+    void OnQTEFail(List<int> missedPlayers)
     {
-        Debug.Log("QTE Failed! Retrying...");
+        Debug.Log($"QTE Failed! {missedPlayers.Count} player(s) missed. Retrying...");
+
+        foreach (int playerIndex in missedPlayers)
+        {
+            Debug.Log($"  - Player {playerIndex} ({(InputManager.LimbPlayer)playerIndex}) missed!");
+        }
+
         // retry QTE
         ChangeState(GameState.QTE);
     }
@@ -271,6 +291,11 @@ public class GameStateManager : MonoBehaviour
         // currently no game over it is infinite whoops
         Debug.Log(won ? "VICTORY!" : "GAME OVER!");
         OnGameOver?.Invoke(won);
+
+        if (wallSelectionUI != null)
+        {
+            wallSelectionUI.SetVisible(false);
+        }
     }
 
     // getters for UI
