@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightArm
-  limbPlayer: 0
+  limbPlayer: 1
   promptPanel: {fileID: 34590484}
   buttonImage: {fileID: 249950200}
   buttonText: {fileID: 339429598}
@@ -184,6 +184,7 @@ MonoBehaviour:
   activeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   successColor: {r: 0, g: 1, b: 0, a: 1}
   missColor: {r: 1, g: 0, b: 0, a: 1}
+  debugThisUI: 0
 --- !u!1 &125365822
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,7 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedText: {fileID: 125365825}
-  runningController: {fileID: 0}
+  runningController: {fileID: 2111202768}
 --- !u!114 &125365825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1058,7 +1059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: LeftLeg
-  limbPlayer: 0
+  limbPlayer: 2
   promptPanel: {fileID: 461338921}
   buttonImage: {fileID: 1012512845}
   buttonText: {fileID: 1819241906}
@@ -1068,6 +1069,7 @@ MonoBehaviour:
   activeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   successColor: {r: 0, g: 1, b: 0, a: 1}
   missColor: {r: 1, g: 0, b: 0, a: 1}
+  debugThisUI: 0
 --- !u!1 &465437430
 GameObject:
   m_ObjectHideFlags: 0
@@ -1926,6 +1928,7 @@ MonoBehaviour:
   activeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   successColor: {r: 0, g: 1, b: 0, a: 1}
   missColor: {r: 1, g: 0, b: 0, a: 1}
+  debugThisUI: 0
 --- !u!1 &701923958
 GameObject:
   m_ObjectHideFlags: 0
@@ -2061,6 +2064,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownDuration: 3
+  qteWindow: 2
   syncWindow: 0.3
   requiredPlayers: 5
   requireAllConnected: 1
@@ -4994,13 +4998,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  useJoystickFallback: 1
+  useManualDeviceAssignment: 0
   leftArmLockKey: 97
   rightArmLockKey: 115
   leftLegLockKey: 119
   rightLegLockKey: 100
   headLockKey: 102
   showDetailedDebug: 1
+  logAllButtonPresses: 1
 --- !u!4 &1674868381
 Transform:
   m_ObjectHideFlags: 0
@@ -6512,7 +6517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limbName: RightLeg
-  limbPlayer: 0
+  limbPlayer: 3
   promptPanel: {fileID: 1987441375}
   buttonImage: {fileID: 1793127342}
   buttonText: {fileID: 1667826880}
@@ -6522,6 +6527,7 @@ MonoBehaviour:
   activeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   successColor: {r: 0, g: 1, b: 0, a: 1}
   missColor: {r: 1, g: 0, b: 0, a: 1}
+  debugThisUI: 0
 --- !u!1 &2006249048
 GameObject:
   m_ObjectHideFlags: 0
@@ -6678,6 +6684,7 @@ MonoBehaviour:
   numberOfWalls: 3
   selectedWallIndex: 0
   wallSelectionCooldown: 0.2
+  showInputDebug: 1
 --- !u!4 &2111202769
 Transform:
   m_ObjectHideFlags: 0

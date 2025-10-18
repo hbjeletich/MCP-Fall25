@@ -23,6 +23,9 @@ public class RunningPhaseController : MonoBehaviour
     public int selectedWallIndex = 0;
     public float wallSelectionCooldown = 0.2f;
 
+    [Header("Debug")]
+    public bool showInputDebug = true;
+
     private InputManager inputManager;
     private float nextPromptTime;
     private float currentPromptInterval;
@@ -43,10 +46,32 @@ public class RunningPhaseController : MonoBehaviour
     void Start()
     {
         inputManager = InputManager.Instance;
+
+        if (inputManager == null)
+        {
+            Debug.LogError("InputManager not found! Make sure InputManager exists in the scene.");
+            return;
+        }
+
+        // Verify controller connections
+        VerifyControllers();
+
         currentPromptInterval = basePromptInterval;
         currentSpeed = baseSpeed;
 
         StartRunning();
+    }
+
+    void VerifyControllers()
+    {
+        Debug.Log("=== CONTROLLER VERIFICATION ===");
+        for (int i = 0; i < 5; i++)
+        {
+            InputManager.LimbPlayer limb = (InputManager.LimbPlayer)i;
+            bool connected = inputManager.IsControllerConnected(i);
+            Debug.Log($"{limb} (Index {i}): {(connected ? "CONNECTED" : "NOT CONNECTED")}");
+        }
+        Debug.Log("================================");
     }
 
     void Update()
@@ -81,6 +106,11 @@ public class RunningPhaseController : MonoBehaviour
         if (Time.time - lastWallSelectionTime < wallSelectionCooldown) return;
 
         float headInput = inputManager.GetLimbHorizontalAxis(InputManager.LimbPlayer.Head);
+
+        if (showInputDebug && headInput != 0)
+        {
+            Debug.Log($"Head Input: {headInput:F2}");
+        }
 
         // Left input - previous wall
         if (headInput < -0.5f)
@@ -120,8 +150,13 @@ public class RunningPhaseController : MonoBehaviour
 
             if (inputManager.GetLimbLockButtonDown(limb))
             {
+                if (showInputDebug)
+                {
+                    Debug.Log($"Input detected from {limbName} (expected: {currentPromptLimb})");
+                }
+
                 OnPlayerInput(limbName);
-                return;
+                return; // Only process one input per frame
             }
         }
     }
@@ -133,12 +168,20 @@ public class RunningPhaseController : MonoBehaviour
 
         OnPromptShown?.Invoke(currentPromptLimb, currentPromptStartTime + promptWindow);
 
-        Debug.Log($"Prompt for {currentPromptLimb}! Press now!");
+        Debug.Log($"Prompt for {currentPromptLimb}! Press now! (Pattern index: {currentPatternIndex})");
     }
 
     public void OnPlayerInput(string limbName)
     {
-        if (currentPromptLimb != limbName) return;
+        // Check if this is the correct limb responding
+        if (currentPromptLimb != limbName)
+        {
+            if (showInputDebug)
+            {
+                Debug.Log($"Wrong limb! {limbName} pressed but {currentPromptLimb} was expected.");
+            }
+            return;
+        }
 
         float timingDifference = Time.time - currentPromptStartTime;
 
@@ -213,5 +256,10 @@ public class RunningPhaseController : MonoBehaviour
     public int GetSelectedWallIndex()
     {
         return selectedWallIndex;
+    }
+
+    public string GetCurrentPromptLimb()
+    {
+        return currentPromptLimb;
     }
 }

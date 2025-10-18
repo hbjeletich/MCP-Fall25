@@ -230,8 +230,8 @@ public class GameStateManager : MonoBehaviour
             Debug.Log($"  - Player {playerIndex} ({(InputManager.LimbPlayer)playerIndex}) missed!");
         }
 
-        // retry QTE
-        ChangeState(GameState.QTE);
+        IncreaseDifficulty();
+        ChangeState(GameState.Transition);
     }
 
     IEnumerator TransitionCoroutine()
