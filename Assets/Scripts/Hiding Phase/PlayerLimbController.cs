@@ -6,26 +6,32 @@ public class PlayerLimbController : MonoBehaviour
 {
     [Header("Limb Settings")]
     public string limbName; // "LeftArm", "RightArm", "LeftLeg", "RightLeg", "Head"
-    public KeyCode lockKey;
+    public InputManager.LimbPlayer limbPlayer;
     public float rotationSpeed = 50f;
     public float minAngle = -45f;
     public float maxAngle = 45f;
-    
-    [Header("Input Axes")]
-    public string horizontalAxis = "Horizontal"; // Will map to joystick
+
     
     private bool isLocked = false;
     private bool hidingModeEnabled = false;
     private float currentAngle = 0f;
 
+    private InputManager inputManager;
+
+    void Start()
+    {
+        inputManager = InputManager.Instance;
+    }
+
     void Update()
     {
+        if (inputManager == null) return;
+        
         if (!hidingModeEnabled) return;
         
         if (!isLocked)
         {
-            // Get joystick input (for now using keyboard axes)
-            float input = Input.GetAxis(horizontalAxis);
+            float input = inputManager.GetLimbHorizontalAxis(limbPlayer);
             
             if (Mathf.Abs(input) > 0.1f) // Deadzone
             {
@@ -35,7 +41,7 @@ public class PlayerLimbController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(lockKey) && !isLocked)
+        if (inputManager.GetLimbLockButtonDown(limbPlayer) && !isLocked)
         {
             LockLimb();
         }
