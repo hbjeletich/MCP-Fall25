@@ -26,7 +26,7 @@ public class InputManager : MonoBehaviour
 
     [Header("Debug Info")]
     public bool showDetailedDebug = true;
-    public bool logAllButtonPresses = true; // New option to debug button issues
+    public bool logAllButtonPresses = true;
 
     private static InputManager instance;
     private Dictionary<int, InputDevice> deviceMap = new Dictionary<int, InputDevice>();
@@ -625,7 +625,6 @@ public class InputManager : MonoBehaviour
         }
         finally
         {
-            // ALWAYS end the area, even if there's an error
             GUILayout.EndArea();
         }
     }
