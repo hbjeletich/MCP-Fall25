@@ -1,6 +1,8 @@
 /*
 Code to handle selecting body parts
 
+used chatgpt to help with specific syntax 
+
 */
 
 
