@@ -5,8 +5,6 @@ used chatgpt to help with specific syntax
 
 */
 
-
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
