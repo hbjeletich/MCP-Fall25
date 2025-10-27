@@ -4,29 +4,35 @@ using UnityEngine;
 
 public class QTEDoors : MonoBehaviour
 {
+    // door objects
     public GameObject door1;
     public GameObject door2;
     public GameObject door3;
     public GameObject door4;
 
+    // scientist objects
     public GameObject scientist1;
     public GameObject scientist2;
     public GameObject scientist3;
     public GameObject scientist4;
 
+    // throwable objects
     public GameObject bottle;
     public GameObject garlic;
     public GameObject hammer;
     public GameObject orange;
 
+    // door start location 
     public float doorStartZ;
     public float doorEndZ;
 
+    // cooldown between throws
     public float cooldown;
 
     // Start is called before the first frame update
     void Start()
     {
+        // disable animations at first
         scientist1.SetActive(false);
         scientist2.SetActive(false);
         scientist3.SetActive(false);
@@ -37,6 +43,7 @@ public class QTEDoors : MonoBehaviour
         hammer.SetActive(false);
         orange.SetActive(false);
 
+        // set cooldown
         cooldown = 0.5f;
         
     }
