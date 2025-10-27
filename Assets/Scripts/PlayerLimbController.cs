@@ -10,8 +10,9 @@ public class PlayerLimbController : MonoBehaviour
     public float rotationSpeed = 50f;
     public float minAngle = -45f;
     public float maxAngle = 45f;
+    public SpriteRenderer spriteRenderer;
 
-    
+
     private bool isLocked = false;
     private bool hidingModeEnabled = false;
     private float currentAngle = 0f;
@@ -21,6 +22,8 @@ public class PlayerLimbController : MonoBehaviour
     void Start()
     {
         inputManager = InputManager.Instance;
+
+        LoadSavedSkin();
     }
 
     void Update()
@@ -44,6 +47,33 @@ public class PlayerLimbController : MonoBehaviour
         if (inputManager.GetLimbLockButtonDown(limbPlayer) && !isLocked)
         {
             LockLimb();
+        }
+    }
+
+    void LoadSavedSkin()
+    {
+        if(SkinManager.Instance == null)
+        {
+            Debug.LogWarning($"{limbName}: SkinManager not found! Using default sprite.");
+            return;
+        }
+
+        if(spriteRenderer == null)
+        {
+            Debug.LogWarning($"{limbName}: No SpriteRenderer found!");
+            return;
+        }
+
+        int savedSkinIndex = SkinManager.Instance.LoadSkin(limbPlayer);
+        Sprite skinSprite = SkinManager.Instance.GetSkinSprite(limbPlayer, savedSkinIndex);
+
+        if(skinSprite != null)
+        {
+            spriteRenderer.sprite = skinSprite;
+        }
+        else
+        {
+            Debug.LogWarning($"{limbName}: Could not load skin sprite at index {savedSkinIndex}");
         }
     }
 
