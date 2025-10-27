@@ -4,8 +4,7 @@ Code to handle selecting body parts
 used chatgpt to help with specific syntax 
 
 */
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,24 +34,27 @@ public class BodySelectionPhase : MonoBehaviour
         private SkinManager skinManager;
         private InputManager inputManager;
 
+        public delegate void OnSkinChangedEvent(Sprite newSkin);
+        public event OnSkinChangedEvent OnSkinChanged;
+
         public void Initialize()
         {
             skinManager = SkinManager.Instance;
             inputManager = InputManager.Instance;
-            
+
             if (skinManager == null)
             {
                 Debug.LogError("SkinManager not found! Make sure it exists in the scene.");
                 return;
             }
-            
+
             currentIndex = skinManager.LoadSkin(limbPlayer);
-            
+
             if (selectionPopup != null)
             {
                 selectionPopup.SetActive(false);
             }
-            
+
             ShowCurrentOption();
         }
 
@@ -79,6 +81,10 @@ public class BodySelectionPhase : MonoBehaviour
             //string horizontalAxis = $"P{playerIndex + 1}_Horizontal"; // e.g., P1_Horizontal
             // changed to work with input manager
             float horizontal = inputManager.GetLimbHorizontalAxis(limbPlayer);;
+            if (Mathf.Abs(horizontal) > 0.1f)
+            {
+                Debug.Log($"[{limbPlayer}] Menu OPEN - Horizontal input: {horizontal:F2}, Cooldown remaining: {INPUT_COOLDOWN - (Time.time - lastInputTime):F2}");
+            }
 
             if (Time.time - lastInputTime > INPUT_COOLDOWN)
             {
@@ -98,12 +104,12 @@ public class BodySelectionPhase : MonoBehaviour
         private void OpenSelectionMenu()
         {
             isSelecting = true;
-            
+
             if (selectionPopup != null)
             {
                 selectionPopup.SetActive(true);
             }
-            
+
             Debug.Log($"{limbPlayer} opened skin selection menu");
         }
 
@@ -111,62 +117,74 @@ public class BodySelectionPhase : MonoBehaviour
         {
             isSelecting = false;
             isConfirmed = true;
-            
+
             if (selectionPopup != null)
             {
                 selectionPopup.SetActive(false);
             }
-            
+
             if (skinManager != null)
             {
                 skinManager.SaveSkin(limbPlayer, currentIndex);
             }
-            
+
             Debug.Log($"{limbPlayer} confirmed skin {currentIndex}");
         }
 
         private void NextOption()
         {
             if (skinManager == null) return;
-            
+
             int skinCount = skinManager.GetSkinCount(limbPlayer);
             if (skinCount == 0) return;
-            
-            currentIndex = (currentIndex + 1) % skinCount; //sets the index to be one to the right
+
+            int oldIndex = currentIndex;
+            currentIndex = (currentIndex + 1) % skinCount;
+
+            Debug.Log($"{limbPlayer} cycling NEXT: {oldIndex} → {currentIndex} (total skins: {skinCount})");
+
             ShowCurrentOption();
-            
-            Debug.Log($"{limbPlayer} cycled to skin {currentIndex}");
         }
 
         private void PreviousOption()
         {
             if (skinManager == null) return;
-            
+
             int skinCount = skinManager.GetSkinCount(limbPlayer);
             if (skinCount == 0) return;
-            
-            currentIndex = (currentIndex - 1 + skinCount) % skinCount; //sets the index to be one to the left
+
+            int oldIndex = currentIndex;
+            currentIndex = (currentIndex - 1 + skinCount) % skinCount;
+
+            Debug.Log($"{limbPlayer} cycling PREV: {oldIndex} → {currentIndex} (total skins: {skinCount})");
+
             ShowCurrentOption();
-            
-            Debug.Log($"{limbPlayer} cycled to skin {currentIndex}");
         }
 
         public void ShowCurrentOption()
         {
-            if (skinManager == null || previewImage == null) return;
-            
+            if (skinManager == null || previewImage == null)
+            {
+                Debug.LogWarning($"{limbPlayer} ShowCurrentOption: skinManager or previewImage is null!");
+                return;
+            }
+
             Sprite currentSkin = skinManager.GetSkinSprite(limbPlayer, currentIndex);
-            
+
             if (currentSkin != null)
             {
                 previewImage.sprite = currentSkin;
                 previewImage.enabled = true;
+
+                Debug.Log($"{limbPlayer} ShowCurrentOption: Set preview to {currentSkin.name}");
+
+                OnSkinChanged?.Invoke(currentSkin);
             }
             else
             {
                 Debug.LogWarning($"No skin sprite found for {limbPlayer} at index {currentIndex}");
             }
-            
+
             if (skinNameText != null)
             {
                 skinNameText.text = $"Skin {currentIndex + 1}";
@@ -187,7 +205,7 @@ public class BodySelectionPhase : MonoBehaviour
     {
         foreach (var part in bodyParts)
         {
-            part.Initialize(); //shows active selection
+            part.Initialize();
         }
     }
 
@@ -197,16 +215,9 @@ public class BodySelectionPhase : MonoBehaviour
         {
             part.HandleInput();
         }
-
-        if (AllPartsSelected())
-        {
-            Debug.Log("All players have selected their limbs!");
-            // Proceed to next phase
-            enabled = false;
-        }
     }
 
-    private bool AllPartsSelected() //returns true when every player has selected a body part
+    private bool AllPartsConfirmed()
     {
         foreach (var part in bodyParts)
         {
@@ -222,13 +233,13 @@ public class BodySelectionPhase : MonoBehaviour
         {
             part.isConfirmed = false;
             part.isSelecting = false;
-            
+
             if (part.selectionPopup != null)
             {
                 part.selectionPopup.SetActive(false);
             }
         }
-        
+
         Debug.Log("Reset all skin confirmations");
     }
 
@@ -244,4 +255,3 @@ public class BodySelectionPhase : MonoBehaviour
         return null;
     }
 }
-
