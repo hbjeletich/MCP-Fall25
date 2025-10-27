@@ -4295,6 +4295,7 @@ MonoBehaviour:
   rotationSpeed: 60
   minAngle: 0
   maxAngle: 45
+  spriteRenderer: {fileID: 1053410267}
 --- !u!1 &1439649711
 GameObject:
   m_ObjectHideFlags: 0
@@ -6153,6 +6154,7 @@ MonoBehaviour:
   rotationSpeed: 60
   minAngle: -45
   maxAngle: 0
+  spriteRenderer: {fileID: 2121502565}
 --- !u!1 &1847127549
 GameObject:
   m_ObjectHideFlags: 0
@@ -6203,6 +6205,7 @@ MonoBehaviour:
   rotationSpeed: 60
   minAngle: -100
   maxAngle: -30
+  spriteRenderer: {fileID: 1014702524}
 --- !u!1 &1855512393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6253,6 +6256,7 @@ MonoBehaviour:
   rotationSpeed: 60
   minAngle: 30
   maxAngle: 100
+  spriteRenderer: {fileID: 1463280649}
 --- !u!1 &1890351529
 GameObject:
   m_ObjectHideFlags: 0
@@ -6374,6 +6378,7 @@ MonoBehaviour:
   rotationSpeed: 60
   minAngle: -45
   maxAngle: 45
+  spriteRenderer: {fileID: 824398198}
 --- !u!1 &1943991652
 GameObject:
   m_ObjectHideFlags: 0

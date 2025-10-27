@@ -62,6 +62,12 @@ public class BodySelectionPhase : MonoBehaviour
         {
             if (inputManager == null || skinManager == null) return;
 
+            if (selectionPopup != null && !selectionPopup.activeSelf && isSelecting)
+            {
+                Debug.LogWarning($"[{limbPlayer}] isSelecting=true but popup is closed! Fixing...");
+                isSelecting = false;
+            }
+
             if (inputManager.GetLimbLockButtonDown(limbPlayer))
             {
                 if (!isSelecting)
@@ -75,7 +81,7 @@ public class BodySelectionPhase : MonoBehaviour
                 return;
             }
 
-            if (isSelecting) //returns if every player has selected a body part
+            if (!isSelecting)
                 return;
 
             //string horizontalAxis = $"P{playerIndex + 1}_Horizontal"; // e.g., P1_Horizontal
