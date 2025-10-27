@@ -10,11 +10,20 @@ public class StartScreenManager : MonoBehaviour
     [Header("UI References")]
     public Button startButton;
     public TextMeshProUGUI statusText;
-    public GameObject[] controllerSquares;
+    
+    [Header("Limb Visuals")]
+    public LimbVisualController[] limbVisuals;
+    
+    [Header("Skin Selection")]
+    public BodySelectionPhase bodySelectionPhase;
     
     [Header("Settings")]
     public string gameSceneName = "SampleScene";
     public bool requireAllControllers = true;
+    
+    [Header("Instructions")]
+    public TextMeshProUGUI instructionText;
+    public string defaultInstruction = "Move sticks to identify your limb!\nPress Lock button to select skin.";
     
     private InputManager inputManager;
     private int connectedCount = 0;
@@ -28,17 +37,40 @@ public class StartScreenManager : MonoBehaviour
             startButton.onClick.AddListener(OnStartButtonClicked);
         }
         
-        // make sure we're in game mode to detect controllers
         if (inputManager != null)
         {
             inputManager.SetInputMode(InputManager.InputMode.Game);
         }
+        
+        if (instructionText != null)
+        {
+            instructionText.text = defaultInstruction;
+        }
+        
+        InitializeLimbVisuals();
     }
 
     void Update()
     {
         UpdateControllerStatus();
         UpdateStartButton();
+    }
+
+    void InitializeLimbVisuals()
+    {
+        if (limbVisuals == null || limbVisuals.Length == 0)
+        {
+            Debug.LogWarning("No limbVisuals assigned to StartScreenManager!");
+            return;
+        }
+        
+        for (int i = 0; i < limbVisuals.Length && i < 5; i++)
+        {
+            if (limbVisuals[i] != null)
+            {
+                limbVisuals[i].gameObject.SetActive(true);
+            }
+        }
     }
 
     void UpdateControllerStatus()
@@ -56,14 +88,12 @@ public class StartScreenManager : MonoBehaviour
                 connectedCount++;
             }
             
-            // show/hide squares based on connection
-            if (i < controllerSquares.Length && controllerSquares[i] != null)
+            if (limbVisuals != null && i < limbVisuals.Length && limbVisuals[i] != null)
             {
-                controllerSquares[i].SetActive(isConnected);
+                limbVisuals[i].gameObject.SetActive(isConnected);
             }
         }
         
-        // status text
         if (statusText != null)
         {
             statusText.text = $"Controllers Connected: {connectedCount}/5";
@@ -74,7 +104,7 @@ public class StartScreenManager : MonoBehaviour
             }
             else if (connectedCount > 0)
             {
-                statusText.text += "\nMove sticks and press buttons to test!";
+                statusText.text += "\nReady to play!";
             }
             else
             {
@@ -87,7 +117,6 @@ public class StartScreenManager : MonoBehaviour
     {
         if (startButton == null) return;
         
-        // enable button only if requirements are met
         if (requireAllControllers)
         {
             startButton.interactable = (connectedCount >= 5);
@@ -101,6 +130,20 @@ public class StartScreenManager : MonoBehaviour
     void OnStartButtonClicked()
     {
         Debug.Log("Starting game...");
+          
         SceneManager.LoadScene(gameSceneName);
+    }
+
+    public void RefreshLimbVisuals()
+    {
+        if (limbVisuals == null) return;
+        
+        foreach (var limbVisual in limbVisuals)
+        {
+            if (limbVisual != null)
+            {
+                limbVisual.UpdateSkin();
+            }
+        }
     }
 }
