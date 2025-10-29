@@ -100,9 +100,9 @@ MonoBehaviour:
     m_OverrideEntries:
     - m_Name: Neutral
       m_Hash: 731503724
-      m_Sprite: {fileID: 0}
+      m_Sprite: {fileID: 3250932134383301661, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
-      m_SpriteOverride: {fileID: 0}
+      m_SpriteOverride: {fileID: 3250932134383301661, guid: 78746e897624b19439a398476df8f336, type: 3}
     - m_Name: Angry
       m_Hash: 16779677
       m_Sprite: {fileID: 1732782335410455288, guid: 78746e897624b19439a398476df8f336, type: 3}
@@ -115,6 +115,27 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -6183849013997634325, guid: 78746e897624b19439a398476df8f336, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 3
+  - m_Name: Hearts
+    m_Hash: 363553203
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: One Heart
+      m_Hash: 460199802
+      m_Sprite: {fileID: 5487224418531717217, guid: 78746e897624b19439a398476df8f336, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5487224418531717217, guid: 78746e897624b19439a398476df8f336, type: 3}
+    - m_Name: Two Hearts
+      m_Hash: 631811011
+      m_Sprite: {fileID: 9080212832243909110, guid: 78746e897624b19439a398476df8f336, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 9080212832243909110, guid: 78746e897624b19439a398476df8f336, type: 3}
+    - m_Name: Three Hearts
+      m_Hash: 958928508
+      m_Sprite: {fileID: -1865847709218623474, guid: 78746e897624b19439a398476df8f336, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -1865847709218623474, guid: 78746e897624b19439a398476df8f336, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 3
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638972905646807109
+  m_ModificationHash: 638973220698251267
   m_Version: 1
