@@ -462,16 +462,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1415318868125079822, guid: 78746e897624b19439a398476df8f336, type: 3}
       propertyPath: m_BoneTransforms.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -1415318868125079822, guid: 78746e897624b19439a398476df8f336, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]
       value: 
-      objectReference: {fileID: 362228504}
+      objectReference: {fileID: 362228503}
     - target: {fileID: -1415318868125079822, guid: 78746e897624b19439a398476df8f336, type: 3}
       propertyPath: m_BoneTransforms.Array.data[1]
       value: 
-      objectReference: {fileID: 362228503}
+      objectReference: {fileID: 362228515}
     - target: {fileID: -1415318868125079822, guid: 78746e897624b19439a398476df8f336, type: 3}
       propertyPath: m_BoneTransforms.Array.data[2]
       value: 
