@@ -3021,6 +3021,7 @@ MonoBehaviour:
   syncWindow: 0.3
   requiredPlayers: 5
   requireAllConnected: 1
+  DoorScript: {fileID: 652807177}
 --- !u!1 &732178960
 GameObject:
   m_ObjectHideFlags: 0

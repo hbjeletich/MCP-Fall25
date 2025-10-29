@@ -42,6 +42,8 @@ public class QTEController : MonoBehaviour
     public delegate void OnQTEFailEvent(List<int> missedPlayerIndices);
     public event OnQTEFailEvent OnQTEFail;
 
+    public QTEDoors DoorScript;
+
     void Start()
     {
         inputManager = InputManager.Instance;
@@ -100,6 +102,7 @@ public class QTEController : MonoBehaviour
         qteStartTime = Time.time;
         Debug.Log("QTE: PRESS NOW!");
         OnQTEStart?.Invoke();
+        DoorScript.ThrowObject();
     }
 
     void CheckPlayerInputs()

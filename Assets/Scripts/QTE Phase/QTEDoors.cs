@@ -51,15 +51,15 @@ public class QTEDoors : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (cooldown > 0)
-        {
-            cooldown -= Time.fixedDeltaTime;
-        }
-        else
-        {
-            cooldown = 5;
-            ThrowObject();
-        }
+        // if (cooldown > 0)
+        // {
+        //     cooldown -= Time.fixedDeltaTime;
+        // }
+        // else
+        // {
+        //     cooldown = 5;
+        //     ThrowObject();
+        // }
 
 
         if (door1.transform.position.z < doorEndZ)
