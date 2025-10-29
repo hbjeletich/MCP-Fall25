@@ -2092,7 +2092,7 @@ MonoBehaviour:
   - {fileID: 805895050}
   - {fileID: 528410375}
   bodySelectionPhase: {fileID: 2032852565}
-  gameSceneName: SampleScene
+  gameSceneName: ActualGame
   requireAllControllers: 1
   instructionText: {fileID: 0}
   defaultInstruction: 'Move sticks to identify your limb!
