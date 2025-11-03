@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 
 public class PlayerLimbController : MonoBehaviour
 {
@@ -10,19 +11,21 @@ public class PlayerLimbController : MonoBehaviour
     public float rotationSpeed = 50f;
     public float minAngle = -45f;
     public float maxAngle = 45f;
-    public SpriteRenderer spriteRenderer;
 
-
+    
     private bool isLocked = false;
     private bool hidingModeEnabled = false;
     private float currentAngle = 0f;
 
     private InputManager inputManager;
+    private SpriteResolver spriteResolver;
 
     void Start()
     {
         inputManager = InputManager.Instance;
-
+        
+        spriteResolver = GetComponent<SpriteResolver>();
+        
         LoadSavedSkin();
     }
 
@@ -52,29 +55,52 @@ public class PlayerLimbController : MonoBehaviour
 
     void LoadSavedSkin()
     {
-        if(SkinManager.Instance == null)
+        if (SkinManager.Instance == null)
         {
-            Debug.LogWarning($"{limbName}: SkinManager not found! Using default sprite.");
+            Debug.LogWarning($"{limbName}: SkinManager not found! Using default skin.");
             return;
         }
 
-        if(spriteRenderer == null)
+        if (spriteResolver == null)
         {
-            Debug.LogWarning($"{limbName}: No SpriteRenderer found!");
+            Debug.LogWarning($"{limbName}: No SpriteResolver found! Cannot apply skin.");
             return;
         }
 
-        int savedSkinIndex = SkinManager.Instance.LoadSkin(limbPlayer);
-        Sprite skinSprite = SkinManager.Instance.GetSkinSprite(limbPlayer, savedSkinIndex);
+        string category = SkinManager.Instance.GetCategoryForLimb(limbPlayer);
+        
+        string savedLabel = SkinManager.Instance.LoadSkin(limbPlayer);
 
-        if(skinSprite != null)
+        if (!string.IsNullOrEmpty(savedLabel))
         {
-            spriteRenderer.sprite = skinSprite;
+            spriteResolver.SetCategoryAndLabel(category, savedLabel);
+            Debug.Log($"{limbName} loaded skin: {category}/{savedLabel}");
         }
         else
         {
-            Debug.LogWarning($"{limbName}: Could not load skin sprite at index {savedSkinIndex}");
+            Debug.LogWarning($"{limbName}: Could not load skin label");
         }
+    }
+
+    public void ChangeSkin(string labelName)
+    {
+        if (spriteResolver == null || SkinManager.Instance == null) return;
+
+        string category = SkinManager.Instance.GetCategoryForLimb(limbPlayer);
+        spriteResolver.SetCategoryAndLabel(category, labelName);
+        
+        // Save the change
+        SkinManager.Instance.SaveSkin(limbPlayer, labelName);
+        
+        Debug.Log($"{limbName} changed to skin: {labelName}");
+    }
+
+    public void ChangeSkinByIndex(int index)
+    {
+        if (SkinManager.Instance == null) return;
+        
+        string labelName = SkinManager.Instance.GetLabelByIndex(limbPlayer, index);
+        ChangeSkin(labelName);
     }
 
     public void LockLimb()

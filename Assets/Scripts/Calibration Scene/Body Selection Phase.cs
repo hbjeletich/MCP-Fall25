@@ -4,11 +4,11 @@ Code to handle selecting body parts
 used chatgpt to help with specific syntax 
 
 */
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using UnityEngine.U2D.Animation;
 
 public class BodySelectionPhase : MonoBehaviour
 {
@@ -20,11 +20,9 @@ public class BodySelectionPhase : MonoBehaviour
 
         [Header("UI References")]
         public GameObject selectionPopup;
-        public Image previewImage;
-        public TextMeshProUGUI skinNameText;
-        public Image[] navigationArrows;
-
+        
         [HideInInspector] public int currentIndex = 0;
+        [HideInInspector] public string currentLabel = "";
         [HideInInspector] public bool isSelecting = false;
         [HideInInspector] public bool isConfirmed = false;
 
@@ -33,8 +31,10 @@ public class BodySelectionPhase : MonoBehaviour
 
         private SkinManager skinManager;
         private InputManager inputManager;
+        private List<string> availableLabels;
+        private Image previewImage;
 
-        public delegate void OnSkinChangedEvent(Sprite newSkin);
+        public delegate void OnSkinChangedEvent(string newLabel);
         public event OnSkinChangedEvent OnSkinChanged;
 
         public void Initialize()
@@ -48,11 +48,31 @@ public class BodySelectionPhase : MonoBehaviour
                 return;
             }
 
-            currentIndex = skinManager.LoadSkin(limbPlayer);
+            availableLabels = skinManager.GetLabelsForLimb(limbPlayer);
+            
+            if (availableLabels.Count == 0)
+            {
+                Debug.LogError($"No labels found for {limbPlayer}!");
+                return;
+            }
+
+            currentIndex = skinManager.LoadSkinAsIndex(limbPlayer);
+            currentLabel = availableLabels[currentIndex];
 
             if (selectionPopup != null)
             {
                 selectionPopup.SetActive(false);
+                
+                previewImage = selectionPopup.GetComponentInChildren<Image>();
+                
+                if (previewImage == null)
+                {
+                    Debug.LogWarning($"{limbPlayer}: No Image component found in selection popup children!");
+                }
+                else
+                {
+                    Debug.Log($"{limbPlayer}: Found preview image - {previewImage.name}");
+                }
             }
 
             ShowCurrentOption();
@@ -81,27 +101,25 @@ public class BodySelectionPhase : MonoBehaviour
                 return;
             }
 
-            if (!isSelecting)
-                return;
+            if (!isSelecting) return;
 
-            //string horizontalAxis = $"P{playerIndex + 1}_Horizontal"; // e.g., P1_Horizontal
-            // changed to work with input manager
-            float horizontal = inputManager.GetLimbHorizontalAxis(limbPlayer);;
+            float horizontal = inputManager.GetLimbHorizontalAxis(limbPlayer);
+
             if (Mathf.Abs(horizontal) > 0.1f)
             {
-                Debug.Log($"[{limbPlayer}] Menu OPEN - Horizontal input: {horizontal:F2}, Cooldown remaining: {INPUT_COOLDOWN - (Time.time - lastInputTime):F2}");
+                Debug.Log($"[{limbPlayer}] Menu OPEN - Horizontal input: {horizontal:F2}");
             }
 
             if (Time.time - lastInputTime > INPUT_COOLDOWN)
             {
                 if (horizontal > 0.5f)
                 {
-                    NextOption(); //if joystick is moved right, option to the right
+                    NextOption();
                     lastInputTime = Time.time;
                 }
                 else if (horizontal < -0.5f)
                 {
-                    PreviousOption(); //if joystick is moved left, option to the left
+                    PreviousOption();
                     lastInputTime = Time.time;
                 }
             }
@@ -131,76 +149,75 @@ public class BodySelectionPhase : MonoBehaviour
 
             if (skinManager != null)
             {
-                skinManager.SaveSkin(limbPlayer, currentIndex);
+                skinManager.SaveSkin(limbPlayer, currentLabel);
             }
 
-            Debug.Log($"{limbPlayer} confirmed skin {currentIndex}");
+            Debug.Log($"{limbPlayer} confirmed skin: {currentLabel}");
         }
 
         private void NextOption()
         {
-            if (skinManager == null) return;
-
-            int skinCount = skinManager.GetSkinCount(limbPlayer);
-            if (skinCount == 0) return;
+            if (skinManager == null || availableLabels == null || availableLabels.Count == 0) return;
 
             int oldIndex = currentIndex;
-            currentIndex = (currentIndex + 1) % skinCount;
+            currentIndex = (currentIndex + 1) % availableLabels.Count;
+            currentLabel = availableLabels[currentIndex];
 
-            Debug.Log($"{limbPlayer} cycling NEXT: {oldIndex} → {currentIndex} (total skins: {skinCount})");
+            Debug.Log($"{limbPlayer} cycling NEXT: {oldIndex} → {currentIndex} ({currentLabel})");
 
             ShowCurrentOption();
         }
 
         private void PreviousOption()
         {
-            if (skinManager == null) return;
-
-            int skinCount = skinManager.GetSkinCount(limbPlayer);
-            if (skinCount == 0) return;
+            if (skinManager == null || availableLabels == null || availableLabels.Count == 0) return;
 
             int oldIndex = currentIndex;
-            currentIndex = (currentIndex - 1 + skinCount) % skinCount;
+            currentIndex = (currentIndex - 1 + availableLabels.Count) % availableLabels.Count;
+            currentLabel = availableLabels[currentIndex];
 
-            Debug.Log($"{limbPlayer} cycling PREV: {oldIndex} → {currentIndex} (total skins: {skinCount})");
+            Debug.Log($"{limbPlayer} cycling PREV: {oldIndex} → {currentIndex} ({currentLabel})");
 
             ShowCurrentOption();
         }
 
         public void ShowCurrentOption()
         {
-            if (skinManager == null || previewImage == null)
+            if (skinManager == null)
             {
-                Debug.LogWarning($"{limbPlayer} ShowCurrentOption: skinManager or previewImage is null!");
+                Debug.LogWarning($"{limbPlayer} ShowCurrentOption: skinManager is null!");
                 return;
             }
 
-            Sprite currentSkin = skinManager.GetSkinSprite(limbPlayer, currentIndex);
-
-            if (currentSkin != null)
+            if (previewImage != null && skinManager.spriteLibraryAsset != null)
             {
-                previewImage.sprite = currentSkin;
-                previewImage.enabled = true;
-
-                Debug.Log($"{limbPlayer} ShowCurrentOption: Set preview to {currentSkin.name}");
-
-                OnSkinChanged?.Invoke(currentSkin);
+                string category = skinManager.GetCategoryForLimb(limbPlayer);
+                Sprite sprite = skinManager.spriteLibraryAsset.GetSprite(category, currentLabel);
+                
+                if (sprite != null)
+                {
+                    previewImage.sprite = sprite;
+                    previewImage.enabled = true;
+                }
+                else
+                {
+                    Debug.LogWarning($"Could not find sprite for {category}/{currentLabel}");
+                }
             }
-            else
-            {
-                Debug.LogWarning($"No skin sprite found for {limbPlayer} at index {currentIndex}");
-            }
 
-            if (skinNameText != null)
-            {
-                skinNameText.text = $"Skin {currentIndex + 1}";
-            }
+            OnSkinChanged?.Invoke(currentLabel);
+            
+            Debug.Log($"{limbPlayer} ShowCurrentOption: {currentLabel}");
         }
 
-        public Sprite GetCurrentSkin()
+        public string GetCurrentLabel()
         {
-            if (skinManager == null) return null;
-            return skinManager.GetSkinSprite(limbPlayer, currentIndex);
+            return currentLabel;
+        }
+
+        public int GetCurrentIndex()
+        {
+            return currentIndex;
         }
     }
 
@@ -249,15 +266,15 @@ public class BodySelectionPhase : MonoBehaviour
         Debug.Log("Reset all skin confirmations");
     }
 
-    public Sprite GetSelectedSkin(InputManager.LimbPlayer limb)
+    public string GetSelectedLabel(InputManager.LimbPlayer limb)
     {
         foreach (var part in bodyParts)
         {
             if (part.limbPlayer == limb)
             {
-                return part.GetCurrentSkin();
+                return part.GetCurrentLabel();
             }
         }
-        return null;
+        return "";
     }
 }
