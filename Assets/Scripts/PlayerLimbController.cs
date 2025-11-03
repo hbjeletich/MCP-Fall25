@@ -8,10 +8,16 @@ public class PlayerLimbController : MonoBehaviour
     [Header("Limb Settings")]
     public string limbName; // "LeftArm", "RightArm", "LeftLeg", "RightLeg", "Head"
     public InputManager.LimbPlayer limbPlayer;
-    public float rotationSpeed = 50f;
-    public float minAngle = -45f;
-    public float maxAngle = 45f;
-
+    
+    [Header("IK Settings")]
+    public Transform ikTarget;
+    public Transform pivotPoint;
+    public float reachRadius = 1.5f;
+    public float moveSpeed = 100f;
+    
+    [Header("Constraints")]
+    public float minAngle = -180f;
+    public float maxAngle = 180f;
     
     private bool isLocked = false;
     private bool hidingModeEnabled = false;
@@ -19,37 +25,82 @@ public class PlayerLimbController : MonoBehaviour
 
     private InputManager inputManager;
     private SpriteResolver spriteResolver;
+    private Vector3 initialOffset;
 
     void Start()
     {
         inputManager = InputManager.Instance;
-        
         spriteResolver = GetComponent<SpriteResolver>();
         
         LoadSavedSkin();
+        
+        if (ikTarget != null && pivotPoint != null)
+        {
+            initialOffset = ikTarget.position - pivotPoint.position;
+            currentAngle = Mathf.Atan2(initialOffset.y, initialOffset.x) * Mathf.Rad2Deg;
+            
+            Debug.Log($"{limbName}: Initial IK angle = {currentAngle:F1}°, radius = {initialOffset.magnitude:F2}");
+        }
+        else
+        {
+            Debug.LogWarning($"{limbName}: IK Target or Pivot Point not assigned!");
+        }
     }
 
-    void Update()
+    void LateUpdate()
     {
-        if (inputManager == null) return;
+        //Debug.Log($"{limbName} Update() is running!");
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            ikTarget.position += Vector3.right * 5f;
+            Debug.Log($"Forced IK move: {ikTarget.position}");
+        }
+
+        if (inputManager == null) 
+        {
+            //Debug.LogWarning($"{limbName}: InputManager not found!");
+            return;
+        }
         
-        if (!hidingModeEnabled) return;
+        if (!hidingModeEnabled)
+        {
+            //Debug.Log($"{limbName}: Hiding mode not enabled, skipping IK handling.");
+            return;
+        }
+
         
         if (!isLocked)
         {
-            float input = inputManager.GetLimbHorizontalAxis(limbPlayer);
-            
-            if (Mathf.Abs(input) > 0.1f) // Deadzone
-            {
-                currentAngle += input * rotationSpeed * Time.deltaTime;
-                currentAngle = Mathf.Clamp(currentAngle, minAngle, maxAngle);
-                transform.localRotation = Quaternion.Euler(0, 0, currentAngle);
-            }
+            HandleIKTargetMovement();
         }
 
         if (inputManager.GetLimbLockButtonDown(limbPlayer) && !isLocked)
         {
             LockLimb();
+        }
+    }
+
+    void HandleIKTargetMovement()
+    {
+        if (ikTarget == null || pivotPoint == null) return;
+        
+        float input = inputManager.GetLimbHorizontalAxis(limbPlayer);
+        
+        if (Mathf.Abs(input) > 0.1f)
+        {
+            currentAngle += input * moveSpeed * Time.deltaTime;
+            
+            currentAngle = Mathf.Clamp(currentAngle, minAngle, maxAngle);
+            
+            float angleRad = currentAngle * Mathf.Deg2Rad;
+            Vector3 offset = new Vector3(
+                Mathf.Cos(angleRad) * reachRadius,
+                Mathf.Sin(angleRad) * reachRadius,
+                0f
+            );
+            
+            ikTarget.position = pivotPoint.position + offset;
         }
     }
 
@@ -68,7 +119,6 @@ public class PlayerLimbController : MonoBehaviour
         }
 
         string category = SkinManager.Instance.GetCategoryForLimb(limbPlayer);
-        
         string savedLabel = SkinManager.Instance.LoadSkin(limbPlayer);
 
         if (!string.IsNullOrEmpty(savedLabel))
@@ -88,8 +138,6 @@ public class PlayerLimbController : MonoBehaviour
 
         string category = SkinManager.Instance.GetCategoryForLimb(limbPlayer);
         spriteResolver.SetCategoryAndLabel(category, labelName);
-        
-        // Save the change
         SkinManager.Instance.SaveSkin(limbPlayer, labelName);
         
         Debug.Log($"{limbName} changed to skin: {labelName}");
@@ -106,7 +154,7 @@ public class PlayerLimbController : MonoBehaviour
     public void LockLimb()
     {
         isLocked = true;
-        Debug.Log($"{limbName} locked at angle: {currentAngle}");
+        Debug.Log($"{limbName} locked at angle: {currentAngle:F1}° (IK mode)");
     }
 
     public void UnlockLimb()
@@ -122,6 +170,11 @@ public class PlayerLimbController : MonoBehaviour
     public float GetCurrentAngle()
     {
         return currentAngle;
+    }
+    
+    public Vector3 GetIKTargetPosition()
+    {
+        return ikTarget != null ? ikTarget.position : Vector3.zero;
     }
 
     public void EnableHidingMode()
