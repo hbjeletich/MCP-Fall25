@@ -314,7 +314,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 869821755803410384, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
-      value: 915268246
+      value: 535709603
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146999370707828375, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_AutoRebind
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146999370707828375, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_AlwaysUpdate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146999370707828375, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_BoneTransforms.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1516772541081742402, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalRotation.w
@@ -334,7 +346,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2896163981771122820, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
-      value: 818624738
+      value: 235139543
       objectReference: {fileID: 0}
     - target: {fileID: 3347683684619209298, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalRotation.w
@@ -386,12 +398,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.size
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]
       value: 
-      objectReference: {fileID: 362228507}
+      objectReference: {fileID: 362228505}
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[1]
       value: 
@@ -399,7 +411,7 @@ PrefabInstance:
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[2]
       value: 
-      objectReference: {fileID: 362228505}
+      objectReference: {fileID: 362228507}
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[3]
       value: 
@@ -427,7 +439,7 @@ PrefabInstance:
     - target: {fileID: 6625364710066335264, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 8931807314850972328, guid: 78746e897624b19439a398476df8f336, type: 3}
+      objectReference: {fileID: -2883042037813624560, guid: 78746e897624b19439a398476df8f336, type: 3}
     - target: {fileID: 7024235104823847630, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Name
       value: Frankenstein Body
@@ -442,7 +454,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7943364322913414735, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
-      value: 975480695
+      value: 260943727
       objectReference: {fileID: 0}
     - target: {fileID: 8192893557834642093, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalPosition.x
@@ -509,6 +521,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 362228504}
     - target: {fileID: 8852951217428097596, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_labelHash
+      value: 0.24418816
+      objectReference: {fileID: 0}
+    - target: {fileID: 8852951217428097596, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
       value: 892810321
       objectReference: {fileID: 0}
@@ -526,6 +542,10 @@ PrefabInstance:
     - {fileID: 4998508577274144801, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     - {fileID: 4220817050921766202, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     - {fileID: 36914758479455454, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+    - {fileID: 6422366059976818517, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+    - {fileID: 3936496018397998505, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+    - {fileID: 4343847212006417717, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+    - {fileID: 903079709284534334, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
