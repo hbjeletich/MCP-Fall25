@@ -1121,25 +1121,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   leftArmSkins:
-  - {fileID: 7482667652216324306, guid: d282f7d7ed7c5462faa59a14606839f4, type: 3}
-  - {fileID: -2413806693520163455, guid: 86f061141508a4aadaf7cb723c2e7df5, type: 3}
-  - {fileID: 7482667652216324306, guid: d827c6bccf6054e90950d993148729f5, type: 3}
+  - {fileID: 3932933394038053401, guid: bc636e317c584f344b4d4e6bd2854a53, type: 3}
   rightArmSkins:
-  - {fileID: 7482667652216324306, guid: 921d94d6b75e540808e1606e16c7e70c, type: 3}
-  - {fileID: -2413806693520163455, guid: 0a4dcd41bfbdf4b57bde6a8e774f8a5d, type: 3}
-  - {fileID: 7482667652216324306, guid: b1d15daea65f142868af52d9a3025574, type: 3}
+  - {fileID: 6324141028331756577, guid: bc636e317c584f344b4d4e6bd2854a53, type: 3}
   leftLegSkins:
-  - {fileID: 7482667652216324306, guid: f2d7efb4c825441c68c58b3956995da2, type: 3}
-  - {fileID: -2413806693520163455, guid: d2544b6a8d816470285fd4adcdf4c0ae, type: 3}
-  - {fileID: 7482667652216324306, guid: 63385dd3eb9f6444f9ff1c5a2071d3ed, type: 3}
+  - {fileID: -2456042148829875462, guid: bc636e317c584f344b4d4e6bd2854a53, type: 3}
   rightLegSkins:
-  - {fileID: 7482667652216324306, guid: c26703ca2b1d044b8a733a0a477c19e6, type: 3}
-  - {fileID: -2413806693520163455, guid: 52c4814745ae34ee5ada610d45bcd2e3, type: 3}
-  - {fileID: 7482667652216324306, guid: 5467799a053c2439faba5623ac028519, type: 3}
+  - {fileID: -4225209100637525450, guid: bc636e317c584f344b4d4e6bd2854a53, type: 3}
   headSkins:
-  - {fileID: 7482667652216324306, guid: 03ed4b6d545804ce79e72a5826d0fad6, type: 3}
-  - {fileID: -2413806693520163455, guid: 3615006e6c3b249a0bb07454b43c9900, type: 3}
-  - {fileID: 7482667652216324306, guid: 295c1012235374be0a3c7883139cf383, type: 3}
+  - {fileID: -4199734913584685289, guid: bc636e317c584f344b4d4e6bd2854a53, type: 3}
+  - {fileID: -8841825125075110218, guid: bc636e317c584f344b4d4e6bd2854a53, type: 3}
+  - {fileID: -7100839484385127513, guid: bc636e317c584f344b4d4e6bd2854a53, type: 3}
 --- !u!4 &759202875
 Transform:
   m_ObjectHideFlags: 0
