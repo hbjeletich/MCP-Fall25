@@ -18,6 +18,9 @@ public class GameStateManager : MonoBehaviour
     [Header("Difficulty")]
     public bool increaseDifficulty = true;
     public float difficultyMultiplier = 1.1f;
+
+    [Header("Player Animator")]
+    public Animator playerAnimator;
     
     private GameState currentState = GameState.Idle;
     private GameState previousState = GameState.Idle;
@@ -119,6 +122,10 @@ public class GameStateManager : MonoBehaviour
                 {
                     hidingPhaseController.StopHiding();
                 }
+                if(playerAnimator != null)
+                {
+                    playerAnimator.enabled = true;
+                }
                 break;
             case GameState.QTE:
             // nothing special for QTE
@@ -139,6 +146,11 @@ public class GameStateManager : MonoBehaviour
                 break;
                 
             case GameState.Hiding:
+                if(playerAnimator != null)
+                {
+                    playerAnimator.enabled = false;
+                }
+                
                 StartHidingPhase();
                 break;
                 

@@ -628,4 +628,22 @@ public class InputManager : MonoBehaviour
             GUILayout.EndArea();
         }
     }
+
+    public float GetLimbVerticalAxis(LimbPlayer limb)
+    {
+        if (!IsControllerConnected((int)limb))
+            return 0f;
+        
+        int controllerIndex = (int)limb;
+        string axisName = $"Joy{controllerIndex + 1}_Vertical";
+        
+        try
+        {
+            return Input.GetAxis(axisName);
+        }
+        catch
+        {
+            return 0f;
+        }
+    }
 }

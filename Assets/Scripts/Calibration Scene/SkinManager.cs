@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 
 public class SkinManager : MonoBehaviour
 {
-    [Header("Limb Skin Sprites")]
-    public Sprite[] leftArmSkins;
-    public Sprite[] rightArmSkins;
-    public Sprite[] leftLegSkins;
-    public Sprite[] rightLegSkins;
-    public Sprite[] headSkins;
+    [Header("Sprite Library")]
+    public SpriteLibraryAsset spriteLibraryAsset;
+    
+    [Header("Category Names")]
+    public string headCategory = "Head";
+    public string leftArmCategory = "LArms";
+    public string rightArmCategory = "RArms";
+    public string leftLegCategory = "LLegs";
+    public string rightLegCategory = "RLegs";
 
     private static SkinManager instance;
     private const string PREF_PREFIX = "LimbSkin_";
@@ -32,68 +36,116 @@ public class SkinManager : MonoBehaviour
         get { return instance; }
     }
 
-    public Sprite[] GetSkinsForLimb(InputManager.LimbPlayer limb)
+    public string GetCategoryForLimb(InputManager.LimbPlayer limb)
     {
         switch (limb)
         {
             case InputManager.LimbPlayer.LeftArm:
-                return leftArmSkins;
+                return leftArmCategory;
             case InputManager.LimbPlayer.RightArm:
-                return rightArmSkins;
+                return rightArmCategory;
             case InputManager.LimbPlayer.LeftLeg:
-                return leftLegSkins;
+                return leftLegCategory;
             case InputManager.LimbPlayer.RightLeg:
-                return rightLegSkins;
+                return rightLegCategory;
             case InputManager.LimbPlayer.Head:
-                return headSkins;
+                return headCategory;
             default:
                 Debug.LogError($"Unknown limb type: {limb}");
-                return null;
+                return "";
         }
     }
 
-    public Sprite GetSkinSprite(InputManager.LimbPlayer limb, int skinIndex)
+    public List<string> GetLabelsForLimb(InputManager.LimbPlayer limb)
     {
-        Sprite[] skins = GetSkinsForLimb(limb);
-        
-        if (skins == null || skins.Length == 0)
+        if (spriteLibraryAsset == null)
         {
-            Debug.LogWarning($"No skins available for {limb}");
-            return null;
+            Debug.LogError("SkinManager: No Sprite Library Asset assigned!");
+            return new List<string>();
         }
 
-        skinIndex = Mathf.Clamp(skinIndex, 0, skins.Length - 1);
-        return skins[skinIndex];
+        string category = GetCategoryForLimb(limb);
+        List<string> labels = new List<string>();
+
+        var categoryLabels = spriteLibraryAsset.GetCategoryLabelNames(category);
+        
+        if (categoryLabels != null)
+        {
+            foreach (var label in categoryLabels)
+            {
+                labels.Add(label);
+            }
+        }
+
+        return labels;
     }
 
     public int GetSkinCount(InputManager.LimbPlayer limb)
     {
-        Sprite[] skins = GetSkinsForLimb(limb);
-        return skins != null ? skins.Length : 0;
+        return GetLabelsForLimb(limb).Count;
     }
 
-    public void SaveSkin(InputManager.LimbPlayer limb, int skinIndex)
+    public string GetLabelByIndex(InputManager.LimbPlayer limb, int index)
+    {
+        List<string> labels = GetLabelsForLimb(limb);
+        
+        if (labels.Count == 0)
+        {
+            Debug.LogWarning($"No labels found for {limb}");
+            return "";
+        }
+
+        index = Mathf.Clamp(index, 0, labels.Count - 1);
+        return labels[index];
+    }
+
+    public int GetIndexOfLabel(InputManager.LimbPlayer limb, string labelName)
+    {
+        List<string> labels = GetLabelsForLimb(limb);
+        int index = labels.IndexOf(labelName);
+        return index >= 0 ? index : 0; // Return 0 if not found
+    }
+
+    public void SaveSkin(InputManager.LimbPlayer limb, string labelName)
     {
         string key = PREF_PREFIX + limb.ToString();
-        PlayerPrefs.SetInt(key, skinIndex);
+        PlayerPrefs.SetString(key, labelName);
         PlayerPrefs.Save();
         
-        Debug.Log($"Saved {limb} skin: {skinIndex}");
+        Debug.Log($"Saved {limb} skin: {labelName}");
     }
 
-    public int LoadSkin(InputManager.LimbPlayer limb)
+    public void SaveSkinByIndex(InputManager.LimbPlayer limb, int index)
+    {
+        string labelName = GetLabelByIndex(limb, index);
+        SaveSkin(limb, labelName);
+    }
+
+    public string LoadSkin(InputManager.LimbPlayer limb)
     {
         string key = PREF_PREFIX + limb.ToString();
-        int savedIndex = PlayerPrefs.GetInt(key, 0); // Default to 0
         
-        // Validate the saved index is within range
-        int maxIndex = GetSkinCount(limb) - 1;
-        if (savedIndex > maxIndex)
+        string savedLabel = PlayerPrefs.GetString(key, "");
+        
+        List<string> labels = GetLabelsForLimb(limb);
+        if (labels.Count == 0)
         {
-            savedIndex = 0;
+            Debug.LogWarning($"No labels available for {limb}");
+            return "";
         }
-        
-        return savedIndex;
+
+        if (string.IsNullOrEmpty(savedLabel) || !labels.Contains(savedLabel))
+        {
+            return labels[0];
+        }
+
+        return savedLabel;
+    }
+
+    public int LoadSkinAsIndex(InputManager.LimbPlayer limb)
+    {
+        string labelName = LoadSkin(limb);
+        return GetIndexOfLabel(limb, labelName);
     }
 
     public void ClearAllSkins()
@@ -110,36 +162,34 @@ public class SkinManager : MonoBehaviour
 
     public bool ValidateSetup()
     {
+        if (spriteLibraryAsset == null)
+        {
+            Debug.LogError("SkinManager: No Sprite Library Asset assigned!");
+            return false;
+        }
+
         bool valid = true;
+        string[] categories = { headCategory, leftArmCategory, rightArmCategory, leftLegCategory, rightLegCategory };
+        string[] names = { "Head", "LeftArm", "RightArm", "LeftLeg", "RightLeg" };
 
-        if (leftArmSkins == null || leftArmSkins.Length == 0)
+        for (int i = 0; i < categories.Length; i++)
         {
-            Debug.LogError("SkinManager: No LeftArm skins assigned!");
-            valid = false;
-        }
-
-        if (rightArmSkins == null || rightArmSkins.Length == 0)
-        {
-            Debug.LogError("SkinManager: No RightArm skins assigned!");
-            valid = false;
-        }
-
-        if (leftLegSkins == null || leftLegSkins.Length == 0)
-        {
-            Debug.LogError("SkinManager: No LeftLeg skins assigned!");
-            valid = false;
-        }
-
-        if (rightLegSkins == null || rightLegSkins.Length == 0)
-        {
-            Debug.LogError("SkinManager: No RightLeg skins assigned!");
-            valid = false;
-        }
-
-        if (headSkins == null || headSkins.Length == 0)
-        {
-            Debug.LogError("SkinManager: No Head skins assigned!");
-            valid = false;
+            var labels = spriteLibraryAsset.GetCategoryLabelNames(categories[i]);
+            
+            if (labels == null || !labels.GetEnumerator().MoveNext())
+            {
+                Debug.LogError($"SkinManager: No labels found for category '{categories[i]}' ({names[i]})");
+                valid = false;
+            }
+            else
+            {
+                int count = 0;
+                foreach (var label in labels)
+                {
+                    count++;
+                }
+                Debug.Log($"✓ {names[i]} ({categories[i]}): {count} skins");
+            }
         }
 
         if (valid)
