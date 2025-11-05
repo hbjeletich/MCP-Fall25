@@ -1963,6 +1963,7 @@ MonoBehaviour:
   pivotPoint: {fileID: 586305882}
   reachRadius: 1.5
   moveSpeed: 100
+  angleOffset: 0
   minAngle: -45
   maxAngle: 0
 --- !u!114 &523220388
@@ -1983,6 +1984,7 @@ MonoBehaviour:
   pivotPoint: {fileID: 586305879}
   reachRadius: 1.5
   moveSpeed: 100
+  angleOffset: 0
   minAngle: 0
   maxAngle: 45
 --- !u!114 &523220389
@@ -2003,6 +2005,7 @@ MonoBehaviour:
   pivotPoint: {fileID: 2128396167}
   reachRadius: 1.5
   moveSpeed: 100
+  angleOffset: 0
   minAngle: -100
   maxAngle: -30
 --- !u!114 &523220390
@@ -2023,6 +2026,7 @@ MonoBehaviour:
   pivotPoint: {fileID: 1369896161}
   reachRadius: 1.5
   moveSpeed: 100
+  angleOffset: 0
   minAngle: 30
   maxAngle: 100
 --- !u!114 &523220391
@@ -2043,6 +2047,7 @@ MonoBehaviour:
   pivotPoint: {fileID: 523220380}
   reachRadius: 1.5
   moveSpeed: 100
+  angleOffset: -90
   minAngle: -45
   maxAngle: 45
 --- !u!1 &547051330
