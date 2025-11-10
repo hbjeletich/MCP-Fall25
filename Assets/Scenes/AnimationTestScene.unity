@@ -318,11 +318,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 869821755803410384, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_labelHash
-      value: 8.1857185e-35
+      value: 3.3873104e-10
       objectReference: {fileID: 0}
     - target: {fileID: 869821755803410384, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
-      value: 915268246
+      value: 535709603
       objectReference: {fileID: 0}
     - target: {fileID: 1146999370707828375, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_AutoRebind
@@ -408,6 +408,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.39293668
       objectReference: {fileID: 0}
+    - target: {fileID: 4354042496026893957, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_SpriteHash
+      value: 330951579
+      objectReference: {fileID: 0}
+    - target: {fileID: 4953962983564463960, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_SpriteHash
+      value: 868706823
+      objectReference: {fileID: 0}
     - target: {fileID: 5078982061322189415, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
       value: 121405508
@@ -479,7 +487,7 @@ PrefabInstance:
     - target: {fileID: 6625364710066335264, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 8931807314850972328, guid: 78746e897624b19439a398476df8f336, type: 3}
+      objectReference: {fileID: -2883042037813624560, guid: 78746e897624b19439a398476df8f336, type: 3}
     - target: {fileID: 7024235104823847630, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Name
       value: Frankenstein Body
@@ -546,7 +554,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8242404816646328044, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -14.502
+      value: -6.923
       objectReference: {fileID: 0}
     - target: {fileID: 8384048355766030257, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalPosition.x
@@ -588,7 +596,12 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.9992258
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 9069862957330223005, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 3250932134383301661, guid: 78746e897624b19439a398476df8f336, type: 3}
+    m_RemovedComponents:
+    - {fileID: 4354042496026893957, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5333178028879707417, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     - {fileID: 4998508577274144801, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
