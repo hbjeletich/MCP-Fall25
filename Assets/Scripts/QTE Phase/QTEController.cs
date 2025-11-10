@@ -14,6 +14,8 @@ public class QTEController : MonoBehaviour
     public bool requireAllConnected = true;
 
     private InputManager inputManager;
+    public GameObject scientistLaugh;
+    public GameObject canvas;
     private bool isQTEActive = false;
     private bool hasStarted = false;
     private float countdownTimer = 0f;
@@ -248,7 +250,10 @@ public class QTEController : MonoBehaviour
         }
         else
         {
-            OnQTEFail?.Invoke(missedPlayers);
+            //OnQTEFail?.Invoke(missedPlayers);
+            scientistLaugh.SetActive(true);
+            DoorScript.StopScroll();
+            canvas.SetActive(false);
         }
     }
 

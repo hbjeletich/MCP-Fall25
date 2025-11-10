@@ -27,6 +27,8 @@ public class HidingPhaseController : MonoBehaviour
     public delegate void OnHidingFailEvent();
     public event OnHidingFailEvent OnHidingFail;
 
+    public QTEDoors DoorScript;
+
     void Update()
     {
         if (!isHiding) return;
@@ -41,6 +43,7 @@ public class HidingPhaseController : MonoBehaviour
 
     public void StartHiding()
     {
+        DoorScript.StopScroll();
         if (walls == null || walls.Length == 0)
         {
             if (wallGenerator != null)
@@ -87,6 +90,7 @@ public class HidingPhaseController : MonoBehaviour
     public void StopHiding()
     {
         isHiding = false;
+        DoorScript.StartScroll();
 
         foreach (var limb in limbs)
         {

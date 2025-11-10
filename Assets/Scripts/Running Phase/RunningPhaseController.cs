@@ -27,9 +27,10 @@ public class RunningPhaseController : MonoBehaviour
     public bool showInputDebug = true;
 
     private InputManager inputManager;
+    public QTEDoors DoorScript;
     private float nextPromptTime;
     private float currentPromptInterval;
-    private bool isRunning = false;
+    public bool isRunning = false;
     private string currentPromptLimb = "";
     private float currentPromptStartTime;
     private float lastWallSelectionTime = 0f;
