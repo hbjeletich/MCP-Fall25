@@ -5,13 +5,13 @@ using UnityEngine;
 public class HidingObject : MonoBehaviour
 {
     [Header("Safe Zone")]
-    public PolygonCollider2D safeZoneCollider;
+    public EdgeCollider2D safeZoneCollider;
 
     void Awake()
     {
         if (safeZoneCollider == null)
         {
-            safeZoneCollider = GetComponent<PolygonCollider2D>();
+            safeZoneCollider = GetComponent<EdgeCollider2D>();
         }
     }
 
