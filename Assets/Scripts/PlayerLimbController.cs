@@ -12,7 +12,6 @@ public class PlayerLimbController : MonoBehaviour
     [Header("IK Settings")]
     public Transform ikTarget;
     public Transform pivotPoint;
-    public float rotationRange = 45f;
     public float rotationSpeed = 100f;
     
     private bool isLocked = false;
@@ -23,9 +22,6 @@ public class PlayerLimbController : MonoBehaviour
 
     private InputManager inputManager;
     private SpriteResolver spriteResolver;
-
-    [HideInInspector] public float minAngle = -180f;
-    [HideInInspector] public float maxAngle = 180f;
 
     void Start()
     {
@@ -64,7 +60,7 @@ public class PlayerLimbController : MonoBehaviour
         if (Mathf.Abs(input) > 0.1f)
         {
             currentAngle += input * rotationSpeed * Time.deltaTime;
-            currentAngle = Mathf.Clamp(currentAngle, startAngle - rotationRange, startAngle + rotationRange);
+            //currentAngle = Mathf.Clamp(currentAngle, startAngle - rotationRange, startAngle + rotationRange);
             
             float angleRad = currentAngle * Mathf.Deg2Rad;
             Vector3 offset = new Vector3(
@@ -145,10 +141,7 @@ public class PlayerLimbController : MonoBehaviour
             currentAngle = startAngle;
             reachRadius = offset.magnitude;
             
-            minAngle = startAngle - rotationRange;
-            maxAngle = startAngle + rotationRange;
-            
-            Debug.Log($"{limbName}: Start angle = {startAngle:F1}°, range = {minAngle:F1}° to {maxAngle:F1}°");
+            Debug.Log($"{limbName}: Start angle = {startAngle:F1}°");
         }
     }
 
