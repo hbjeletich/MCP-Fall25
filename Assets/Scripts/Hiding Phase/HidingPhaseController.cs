@@ -6,19 +6,20 @@ public class HidingPhaseController : MonoBehaviour
 {
     [Header("References")]
     public PlayerLimbController[] limbs;
-    public WallGenerator wallGenerator;
+    public HidingObjectManager objectManager;
     public RunningPhaseController runningPhaseController;
 
     [Header("Timing")]
     public float hidingDuration = 10f;
 
-    private WallHole[] walls;
-    private WallHole currentWall;
-    private int currentWallIndex = 0;
+    private HidingObject[] objects;
+    private HidingObject currentObject;
+    private int currentObjectIndex = 0;
     private float hidingTimer = 0f;
     private bool isHiding = false;
+    private SpriteRenderer[] limbRenderers;
 
-    public delegate void OnHidingStartEvent(WallHole wall);
+    public delegate void OnHidingStartEvent(HidingObject hidingObject);
     public event OnHidingStartEvent OnHidingStart;
 
     public delegate void OnHidingSuccessEvent();
@@ -28,6 +29,27 @@ public class HidingPhaseController : MonoBehaviour
     public event OnHidingFailEvent OnHidingFail;
 
     public QTEDoors DoorScript;
+
+    void Start()
+    {
+        SetupLimbRenderers();
+    }
+
+    void SetupLimbRenderers()
+    {
+        limbRenderers = new SpriteRenderer[limbs.Length];
+        for (int i = 0; i < limbs.Length; i++)
+        {
+            if (limbs[i] != null)
+            {
+                limbRenderers[i] = limbs[i].GetComponent<SpriteRenderer>();
+                if (limbRenderers[i] == null)
+                {
+                    Debug.LogWarning($"Limb {limbs[i].limbName} does not have a SpriteRenderer component!");
+                }
+            }
+        }
+    }
 
     void Update()
     {
@@ -44,20 +66,21 @@ public class HidingPhaseController : MonoBehaviour
     public void StartHiding()
     {
         DoorScript.StopScroll();
-        if (walls == null || walls.Length == 0)
+        
+        if (objects == null || objects.Length == 0)
         {
-            if (wallGenerator != null)
+            if (objectManager != null)
             {
-                walls = wallGenerator.GenerateWalls();
+                objects = objectManager.GenerateObjects();
 
-                foreach (var wall in walls)
+                foreach (var obj in objects)
                 {
-                    wall.SetAlpha(0f);
+                    obj.SetAlpha(0f);
                 }
             }
             else
             {
-                Debug.LogError("No wall generator assigned!");
+                Debug.LogError("No object manager assigned!");
                 return;
             }
         }
@@ -68,23 +91,23 @@ public class HidingPhaseController : MonoBehaviour
         if (runningPhaseController != null)
         {
             int selectedIndex = runningPhaseController.GetSelectedWallIndex();
-            currentWall = walls[selectedIndex];
+            currentObject = objects[selectedIndex];
         }
 
-        foreach (var wall in walls)
+        foreach (var obj in objects)
         {
-            wall.SetAlpha(0f);
+            obj.SetAlpha(0f);
         }
 
-        currentWall.SetAlpha(1f);
+        currentObject.SetAlpha(1f);
 
         foreach (var limb in limbs)
         {
             limb.EnableHidingMode();
         }
 
-        OnHidingStart?.Invoke(currentWall);
-        Debug.Log($"Hiding phase started! Round {currentWallIndex + 1}");
+        OnHidingStart?.Invoke(currentObject);
+        Debug.Log($"Hiding phase started! Round {currentObjectIndex + 1}");
     }
 
     public void StopHiding()
@@ -104,13 +127,13 @@ public class HidingPhaseController : MonoBehaviour
     {
         isHiding = false;
 
-        bool success = currentWall.CheckMatch(limbs);
+        bool success = currentObject.CheckMatch(limbRenderers);
 
         if (success)
         {
             Debug.Log("Successfully hid!");
             OnHidingSuccess?.Invoke();
-            currentWallIndex++;
+            currentObjectIndex++;
 
             ResetLimbs();
         }
@@ -130,11 +153,11 @@ public class HidingPhaseController : MonoBehaviour
             limb.UnlockLimb();
         }
 
-        if (walls != null)
+        if (objects != null)
         {
-            foreach (var wall in walls)
+            foreach (var obj in objects)
             {
-                wall.SetAlpha(0f);
+                obj.SetAlpha(0f);
             }
         }
     }
@@ -144,14 +167,14 @@ public class HidingPhaseController : MonoBehaviour
         return hidingDuration - hidingTimer;
     }
 
-    public int GetCurrentWallIndex()
+    public int GetCurrentObjectIndex()
     {
-        return currentWallIndex;
+        return currentObjectIndex;
     }
 
-    public int GetTotalWalls()
+    public int GetTotalObjects()
     {
-        return walls != null ? walls.Length : 0;
+        return objects != null ? objects.Length : 0;
     }
 
     public bool IsHiding()
