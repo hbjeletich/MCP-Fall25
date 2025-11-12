@@ -348,6 +348,14 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.96975374
       objectReference: {fileID: 0}
+    - target: {fileID: 2158420017750257889, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_Size.x
+      value: 2.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 2158420017750257889, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1865847709218623474, guid: 78746e897624b19439a398476df8f336, type: 3}
     - target: {fileID: 2602086475777915177, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -570,7 +578,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]

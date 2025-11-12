@@ -194,8 +194,13 @@ MonoBehaviour:
       m_Sprite: {fileID: -1865847709218623474, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -1865847709218623474, guid: 78746e897624b19439a398476df8f336, type: 3}
+    - m_Name: No hearts
+      m_Hash: 367690390
+      m_Sprite: {fileID: 0}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 0}
     m_FromMain: 0
-    m_EntryOverrideCount: 3
+    m_EntryOverrideCount: 4
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638977600906034924
+  m_ModificationHash: 638984824836818168
   m_Version: 1
