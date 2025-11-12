@@ -72,7 +72,7 @@ public class HidingObject : MonoBehaviour
                     
                     Vector2 worldPixelPos = spriteRenderer.transform.TransformPoint(localPixelPos);
                     
-                    if (!safeZoneCollider.OverlapPoint(worldPixelPos))
+                    if (safeZoneCollider.OverlapPoint(worldPixelPos))   // If touching edge → fail
                     {
                         Debug.Log($"{spriteRenderer.name} has pixel outside safe zone at {worldPixelPos}");
                         return false;
