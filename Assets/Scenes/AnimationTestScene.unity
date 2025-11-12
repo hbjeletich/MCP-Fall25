@@ -426,7 +426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4953962983564463960, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
-      value: 868706823
+      value: 330951579
       objectReference: {fileID: 0}
     - target: {fileID: 5078982061322189415, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
@@ -462,7 +462,7 @@ PrefabInstance:
       objectReference: {fileID: 362228508}
     - target: {fileID: 5327164721114160050, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_AutoRebind
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5327164721114160050, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_AlwaysUpdate
@@ -582,7 +582,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]
@@ -611,7 +611,7 @@ PrefabInstance:
     - target: {fileID: 9069862957330223005, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 3250932134383301661, guid: 78746e897624b19439a398476df8f336, type: 3}
+      objectReference: {fileID: 1732782335410455288, guid: 78746e897624b19439a398476df8f336, type: 3}
     m_RemovedComponents:
     - {fileID: 4354042496026893957, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     - {fileID: 5249825232320036446, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
