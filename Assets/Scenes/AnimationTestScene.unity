@@ -350,7 +350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2158420017750257889, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Size.x
-      value: 2.99
+      value: 2.15
       objectReference: {fileID: 0}
     - target: {fileID: 2158420017750257889, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Sprite
@@ -562,7 +562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8242404816646328044, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -6.923
+      value: -7.046
       objectReference: {fileID: 0}
     - target: {fileID: 8384048355766030257, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalPosition.x
@@ -578,7 +578,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]
@@ -610,6 +610,8 @@ PrefabInstance:
       objectReference: {fileID: 3250932134383301661, guid: 78746e897624b19439a398476df8f336, type: 3}
     m_RemovedComponents:
     - {fileID: 4354042496026893957, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+    - {fileID: 5249825232320036446, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+    - {fileID: 1216586288276190376, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5333178028879707417, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
     - {fileID: 4998508577274144801, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
