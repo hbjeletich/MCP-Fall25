@@ -250,10 +250,10 @@ public class QTEController : MonoBehaviour
         }
         else
         {
-            //OnQTEFail?.Invoke(missedPlayers);
-            scientistLaugh.SetActive(true);
-            DoorScript.StopScroll();
-            canvas.SetActive(false);
+            OnQTEFail?.Invoke(missedPlayers);
+            //scientistLaugh.SetActive(true);
+            //DoorScript.StopScroll();
+            //canvas.SetActive(false);
         }
     }
 
