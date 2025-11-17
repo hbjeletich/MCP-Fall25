@@ -58,9 +58,9 @@ public class HidingPhaseUI : MonoBehaviour
         
         if (wallProgressText != null)
         {
-            int current = hidingController.GetCurrentWallIndex() + 1;
-            int total = hidingController.GetTotalWalls();
-            wallProgressText.text = $"Wall {current}/{total}";
+            int current = hidingController.GetCurrentObjectIndex() + 1;
+            int total = hidingController.GetTotalObjects();
+            wallProgressText.text = $"Object {current}/{total}";
         }
         
         UpdateLimbIndicators();

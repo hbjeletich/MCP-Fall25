@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.U2D.Animation;
 
 public class LimbVisualController : MonoBehaviour
 {
@@ -11,10 +12,8 @@ public class LimbVisualController : MonoBehaviour
     [Header("Visual Settings")]
     public float rotationSpeed = 100f;
 
-    [Header("UI References")]
     private Image limbImage;
     private RectTransform limbTransform;
-
     private InputManager inputManager;
     private SkinManager skinManager;
     private BodySelectionPhase bodySelectionPhase;
@@ -35,7 +34,6 @@ public class LimbVisualController : MonoBehaviour
         limbTransform = GetComponent<RectTransform>();
 
         LoadAndDisplaySkin();
-
         SubscribeToSkinChanges();
     }
 
@@ -73,12 +71,16 @@ public class LimbVisualController : MonoBehaviour
         }
     }
 
-    void OnSkinChangedHandler(Sprite newSkin)
+    void OnSkinChangedHandler(string newLabel)
     {
-        if (limbImage != null && newSkin != null)
+        if (limbImage != null && skinManager != null && !string.IsNullOrEmpty(newLabel))
         {
-            limbImage.sprite = newSkin;
-            Debug.Log($"{assignedLimb} display updated to new skin");
+            Sprite sprite = GetSpriteFromLibrary(newLabel);
+            if (sprite != null)
+            {
+                limbImage.sprite = sprite;
+                Debug.Log($"{assignedLimb} display updated to: {newLabel}");
+            }
         }
     }
 
@@ -113,19 +115,47 @@ public class LimbVisualController : MonoBehaviour
             return;
         }
 
-        int savedSkinIndex = skinManager.LoadSkin(assignedLimb);
-
-        Sprite skinSprite = skinManager.GetSkinSprite(assignedLimb, savedSkinIndex);
-
-        if (skinSprite != null && limbImage != null)
+        if (limbImage == null)
         {
-            limbImage.sprite = skinSprite;
-            Debug.Log($"{assignedLimb} loaded skin {savedSkinIndex}");
+            Debug.LogWarning($"No Image component! Cannot load skin for {assignedLimb}");
+            return;
+        }
+
+        string savedLabel = skinManager.LoadSkin(assignedLimb);
+
+        if (!string.IsNullOrEmpty(savedLabel))
+        {
+            Sprite sprite = GetSpriteFromLibrary(savedLabel);
+            if (sprite != null)
+            {
+                limbImage.sprite = sprite;
+                Debug.Log($"{assignedLimb} loaded skin: {savedLabel}");
+            }
         }
         else
         {
-            Debug.LogWarning($"Could not load skin sprite for {assignedLimb}");
+            Debug.LogWarning($"Could not load skin for {assignedLimb}");
         }
+    }
+
+    Sprite GetSpriteFromLibrary(string labelName)
+    {
+        if (skinManager == null || skinManager.spriteLibraryAsset == null)
+        {
+            Debug.LogWarning("SkinManager or Sprite Library Asset not found!");
+            return null;
+        }
+
+        string category = skinManager.GetCategoryForLimb(assignedLimb);
+        
+        Sprite sprite = skinManager.spriteLibraryAsset.GetSprite(category, labelName);
+        
+        if (sprite == null)
+        {
+            Debug.LogWarning($"Could not find sprite for category '{category}', label '{labelName}'");
+        }
+
+        return sprite;
     }
 
     void HandleRotationInput()
@@ -148,11 +178,15 @@ public class LimbVisualController : MonoBehaviour
         LoadAndDisplaySkin();
     }
 
-    public void UpdateSkin(Sprite newSkin)
+    public void UpdateSkin(string labelName)
     {
-        if (limbImage != null && newSkin != null)
+        if (limbImage != null && !string.IsNullOrEmpty(labelName))
         {
-            limbImage.sprite = newSkin;
+            Sprite sprite = GetSpriteFromLibrary(labelName);
+            if (sprite != null)
+            {
+                limbImage.sprite = sprite;
+            }
         }
     }
 
@@ -163,7 +197,6 @@ public class LimbVisualController : MonoBehaviour
 
     public void ResetRotation()
     {
-    
         currentRotation = 0f;
         if (limbTransform != null)
         {
