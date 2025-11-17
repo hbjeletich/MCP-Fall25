@@ -29,6 +29,7 @@ public class RunningPhaseController : MonoBehaviour
 
     private InputManager inputManager;
     public QTEDoors DoorScript;
+    public GameStateManager gameManager;
     private float nextPromptTime;
     private float currentPromptInterval;
     public bool isRunning = false;
@@ -267,6 +268,11 @@ public class RunningPhaseController : MonoBehaviour
     {
         isRunning = false;
         currentPromptLimb = "";
+        if (currentSpeed < 1.0f)
+        {
+            gameManager.LoseHeart();
+            Debug.Log("Running phase failed! Speed must stay over 1.0!");
+        }
         Debug.Log("Running phase stopped!");
     }
 

@@ -14,8 +14,6 @@ public class QTEController : MonoBehaviour
     public bool requireAllConnected = true;
 
     private InputManager inputManager;
-    public GameObject scientistLaugh;
-    public GameObject canvas;
     private bool isQTEActive = false;
     private bool hasStarted = false;
     private float countdownTimer = 0f;
@@ -45,8 +43,7 @@ public class QTEController : MonoBehaviour
     public event OnQTEFailEvent OnQTEFail;
 
     public QTEDoors DoorScript;
-
-    public Animator frankensteinAnimator;
+    public GameStateManager gameManager;
 
     void Start()
     {
@@ -206,6 +203,7 @@ public class QTEController : MonoBehaviour
         {
             // FAIL - ALL PLAYERS PRESSED, BUT NOT SYNCHRONIZED ENOUGH
             Debug.Log("QTE: FAILED! Presses not synchronized.");
+            gameManager.LoseHeart();
 
             // ADDS WHOEVER WAS OUT OF SYNC TO MISSED PLAYERS LIST
             for (int i = 0; i < 5; i++)
@@ -249,6 +247,15 @@ public class QTEController : MonoBehaviour
         isQTEActive = false;
         hasStarted = false;
 
+        if(success)
+        {
+            DoorScript.DodgeObject();
+        }
+        else
+        {
+            DoorScript.HitObject();
+        }
+
         StartCoroutine(EndAfterDelay(success, 1.0f));
     }
 
@@ -266,12 +273,7 @@ public class QTEController : MonoBehaviour
         // IF QTE IS NOT SUCCESSFULLY COMPLETED
         else
         {
-            //OnQTEFail?.Invoke(missedPlayers);
-
-            scientistLaugh.SetActive(true);
-            frankensteinAnimator.enabled = false;
-            DoorScript.StopScroll();
-            canvas.SetActive(false);
+            OnQTEFail?.Invoke(missedPlayers);
         }
     }
 

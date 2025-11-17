@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 
 public class GameStateManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class GameStateManager : MonoBehaviour
     public HidingPhaseController hidingPhaseController;
     public WallSelectionUI wallSelectionUI;
     public QTEController qteController;
+    public QTEDoors DoorScript;
     
     [Header("Game Settings")]
     public float runningPhaseDuration = 15f; 
@@ -26,6 +28,14 @@ public class GameStateManager : MonoBehaviour
     private GameState previousState = GameState.Idle;
     private int wallsCompleted = 0;
     private float currentDifficulty = 1f;
+
+    public GameObject hearts;
+    public SpriteResolver heartSprite;
+    public int remainingHearts;
+
+    public GameObject scientistLaugh;
+    public GameObject canvas;
+    public Animator frankensteinAnimator;
     
     public enum GameState
     {
@@ -65,6 +75,7 @@ public class GameStateManager : MonoBehaviour
 
         // FOR NOW auto start
         StartGame();
+        remainingHearts = 3;
     }
 
     void OnDestroy()
@@ -127,9 +138,8 @@ public class GameStateManager : MonoBehaviour
                     playerAnimator.enabled = true;
                 }
                 break;
-            case GameState.QTE:
-            // nothing special for QTE
-                break;
+            // case GameState.QTE:
+            //     // nothing special
         }
     }
 
@@ -236,6 +246,7 @@ public class GameStateManager : MonoBehaviour
     void OnQTEFail(List<int> missedPlayers)
     {
         Debug.Log($"QTE Failed! {missedPlayers.Count} player(s) missed. Retrying...");
+        LoseHeart();
 
         foreach (int playerIndex in missedPlayers)
         {
@@ -283,6 +294,7 @@ public class GameStateManager : MonoBehaviour
 
     void OnHidingFail()
     {
+        LoseHeart();
         Debug.Log("Hiding phase failed! Retrying...");
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
@@ -298,11 +310,37 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    public void LoseHeart()
+    {
+        remainingHearts -= 1;
+        if (heartSprite.GetLabel() == "Three Hearts")
+        {
+            heartSprite.SetCategoryAndLabel("Hearts", "Two Hearts");
+        }
+        else if (heartSprite.GetLabel() == "Two Hearts")
+        {
+            heartSprite.SetCategoryAndLabel("Hearts", "One Heart");
+        }
+        else if (heartSprite.GetLabel() == "One Heart")
+        {
+            hearts.SetActive(false);
+            HandleGameOver(false);
+        }
+    }
+
     void HandleGameOver(bool won)
     {
         // currently no game over it is infinite whoops
         Debug.Log(won ? "VICTORY!" : "GAME OVER!");
         OnGameOver?.Invoke(won);
+
+        if (!won)
+        {
+            scientistLaugh.SetActive(true);
+            frankensteinAnimator.enabled = false;
+            DoorScript.StopScroll();
+            canvas.SetActive(false);
+        }
 
         if (wallSelectionUI != null)
         {
