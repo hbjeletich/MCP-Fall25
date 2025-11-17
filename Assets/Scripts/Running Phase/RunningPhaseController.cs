@@ -7,7 +7,6 @@ public class RunningPhaseController : MonoBehaviour
     public float basePromptInterval = 1.5f;
     public float promptWindow = 0.5f;
     public float difficultyIncreaseRate = 0.05f;
-    public float scientistRunCooldown = 2.5f;
 
     [Header("Pattern")]
     public List<string> limbPattern = new List<string> { "LeftLeg", "RightLeg", "LeftArm", "RightArm" };
@@ -28,11 +27,9 @@ public class RunningPhaseController : MonoBehaviour
     public bool showInputDebug = true;
 
     private InputManager inputManager;
-    public QTEDoors DoorScript;
-    public GameStateManager gameManager;
     private float nextPromptTime;
     private float currentPromptInterval;
-    public bool isRunning = false;
+    private bool isRunning = false;
     private string currentPromptLimb = "";
     private float currentPromptStartTime;
     private float lastWallSelectionTime = 0f;
@@ -82,6 +79,7 @@ public class RunningPhaseController : MonoBehaviour
         if (!isRunning) return;
 
         currentPromptInterval = Mathf.Max(0.5f, currentPromptInterval - (difficultyIncreaseRate * Time.deltaTime));
+
         // Check head player input for wall selection
         CheckHeadInput();
 
@@ -99,32 +97,6 @@ public class RunningPhaseController : MonoBehaviour
         if (Time.time >= nextPromptTime && currentPromptLimb == "")
         {
             ShowNextPrompt();
-        }
-    }
-
-    void FixedUpdate()
-    {
-        if (!isRunning) return;
-
-        if (scientistRunCooldown > 0)
-        {
-            scientistRunCooldown -= Time.deltaTime;
-        }
-        else
-        {
-            scientistRunCooldown = 2.5f;
-            if(currentSpeed > 3)
-            {
-                DoorScript.ScientistRun(2);
-            }
-            else if (currentSpeed > 1.5f)
-            {
-                DoorScript.ScientistRun(1);
-            }
-            else
-            {
-                DoorScript.ScientistRun(0);
-            }
         }
     }
 
@@ -268,11 +240,6 @@ public class RunningPhaseController : MonoBehaviour
     {
         isRunning = false;
         currentPromptLimb = "";
-        if (currentSpeed < 1.0f)
-        {
-            gameManager.LoseHeart();
-            Debug.Log("Running phase failed! Speed must stay over 1.0!");
-        }
         Debug.Log("Running phase stopped!");
     }
 

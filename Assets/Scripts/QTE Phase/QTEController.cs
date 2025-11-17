@@ -42,9 +42,6 @@ public class QTEController : MonoBehaviour
     public delegate void OnQTEFailEvent(List<int> missedPlayerIndices);
     public event OnQTEFailEvent OnQTEFail;
 
-    public QTEDoors DoorScript;
-    public GameStateManager gameManager;
-
     void Start()
     {
         inputManager = InputManager.Instance;
@@ -103,10 +100,8 @@ public class QTEController : MonoBehaviour
         qteStartTime = Time.time;
         Debug.Log("QTE: PRESS NOW!");
         OnQTEStart?.Invoke();
-        DoorScript.ThrowObject(1);
     }
 
-    // CHECKS FOR ALL PLAYERS' BUTTON PRESSES
     void CheckPlayerInputs()
     {
         if (inputManager == null) return;
@@ -135,23 +130,20 @@ public class QTEController : MonoBehaviour
         }
     }
 
-    // QTE TIMEOUT (IF NOT ALL PLAYERS PRESSED THEIR BUTTONS)
     void HandleQTETimeout()
     {
-        // GET TOTAL PLAYER COUNT
+        // time ran out - identify who missed
         int targetCount = GetTargetPlayerCount();
 
-        // IF TOTAL PRESSES IS LESS THAN TOTAL PLAYERS
         if (pressCount < targetCount)
         {
-            // ITERATES THROUGH PLAYERS
             for (int i = 0; i < 5; i++)
             {
                 if (requireAllConnected && !inputManager.IsControllerConnected(i))
                 {
                     continue;
                 }
-                // ADDS EACH PLAYER TO LIST WHO FAILED TO PRESS BUTTON
+
                 if (!hasPressed[i])
                 {
                     missedPlayers.Add(i);
@@ -159,24 +151,21 @@ public class QTEController : MonoBehaviour
                     Debug.Log($"QTE: Player {i} ({(InputManager.LimbPlayer)i}) MISSED!");
                 }
             }
-            // TIMES OUT OF QUICK TIME EVENT (FAIL STATE) (?)
+
             Debug.Log($"QTE: TIMEOUT! {missedPlayers.Count} player(s) missed.");
             EndQTE(false);
         }
     }
 
-    // CHECKS RESULT OF QTE
     void CheckQTEResult()
     {
-        // TOTAL # OF PLAYERS CONNECTED
         int targetCount = GetTargetPlayerCount();
-        // RETURNS IF NOT ALL PLAYERS PRESSED BUTTON
+
         if (pressCount < targetCount) return;
-        // EARLIEST AND LATEST PRESS TIME
+
         float firstPressTime = float.MaxValue;
         float lastPressTime = float.MinValue;
 
-        // SETS FIRST AND LAST PRESS TIMES
         for (int i = 0; i < 5; i++)
         {
             if (hasPressed[i])
@@ -187,25 +176,23 @@ public class QTEController : MonoBehaviour
                     lastPressTime = buttonPressTimes[i];
             }
         }
-        // CALCULATE TIME BETWEEN FIRST AND LAST PRESS
+
         float timeDifference = lastPressTime - firstPressTime;
+
         Debug.Log($"QTE: Time difference = {timeDifference:F3}s (Window: {syncWindow}s)");
 
-        // IF ALL PLAYERS PRESSED WITHIN THE DESIGNATED SYNC WINDOW
         if (timeDifference <= syncWindow)
         {
             // SUCCESS!
             Debug.Log("QTE: SUCCESS! All pressed in sync!");
             EndQTE(true);
         }
-        // ELSE IF NOT
         else
         {
-            // FAIL - ALL PLAYERS PRESSED, BUT NOT SYNCHRONIZED ENOUGH
+            // FAIL - pressed but not synchronized
             Debug.Log("QTE: FAILED! Presses not synchronized.");
-            gameManager.LoseHeart();
 
-            // ADDS WHOEVER WAS OUT OF SYNC TO MISSED PLAYERS LIST
+            // who was out of sync
             for (int i = 0; i < 5; i++)
             {
                 if (hasPressed[i])
@@ -218,12 +205,11 @@ public class QTEController : MonoBehaviour
                     }
                 }
             }
-            // ENDS IN FAIL STATE (?)
+
             EndQTE(false);
         }
     }
 
-    // GETS TARGET NUMBER OF PLAYERS (# OF PLAYERS CONNECTED WITH CONTROLLERS)
     int GetTargetPlayerCount()
     {
         if (requireAllConnected)
@@ -241,68 +227,49 @@ public class QTEController : MonoBehaviour
         return requiredPlayers;
     }
 
-    // ENDS QUICK TIME EVENT
     void EndQTE(bool success)
     {
         isQTEActive = false;
         hasStarted = false;
 
-        if(success)
-        {
-            DoorScript.DodgeObject();
-        }
-        else
-        {
-            DoorScript.HitObject();
-        }
-
         StartCoroutine(EndAfterDelay(success, 1.0f));
     }
 
-    // ENDS QTE AFTER DELAY
     IEnumerator EndAfterDelay(bool success, float delay)
     {
-        // DELAY TIME
         yield return new WaitForSeconds(delay);
 
-        // IF QTE IS SUCCESSFULLY COMPLETED
         if (success)
         {
             OnQTESuccess?.Invoke();
         }
-        // IF QTE IS NOT SUCCESSFULLY COMPLETED
         else
         {
             OnQTEFail?.Invoke(missedPlayers);
         }
     }
 
-    // RETURNS IF QTE IS CURRENTLY ACTIVE
     public bool IsQTEActive()
     {
         return isQTEActive;
     }
 
-    // RETURNS IF QTE HAS STARTED
     public bool HasStarted()
     {
         return hasStarted;
     }
 
-    // RETURNS COUNTDOWN TIMER
     public float GetCountdownTimer()
     {
         return countdownTimer;
     }
 
-    // RETURNS REMAINING TIME LEFT IN QTE
     public float GetRemainingQTETime()
     {
         if (!hasStarted) return qteWindow;
         return Mathf.Max(0, qteWindow - (Time.time - qteStartTime));
     }
 
-    // RETURNS LIST OF PLAYERS WHO MISSED THE QTE WINDOW
     public List<int> GetMissedPlayers()
     {
         return new List<int>(missedPlayers);

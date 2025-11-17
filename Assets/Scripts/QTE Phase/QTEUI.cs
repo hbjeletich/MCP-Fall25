@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-//using static System.Net.Mime.MediaTypeNames;
+using TMPro;
 
 public class QTEUI : MonoBehaviour
 {
@@ -14,21 +12,7 @@ public class QTEUI : MonoBehaviour
     public TextMeshProUGUI instructionText;
     public string countdownInstruction = "Get Ready!";
     public string pressInstruction = "PRESS NOW!";
-    //sloane adding new code below this point
-    public Image countdownImage;
-    public Image instructionImage;
-
-    [Header("Countdown Sprites")]
-    public Sprite countdown3Sprite;
-    public Sprite countdown2Sprite;
-    public Sprite countdown1Sprite;
-    public Sprite goSprite;
-
-    [Header("Instruction Sprites")]
-    public Sprite getReadySprite;
-    public Sprite pressNowSprite;
-    //sloane code finished here
-
+    
     [Header("Player Indicators")]
     public Image[] playerIndicators; // 5 indicators
     public Color notPressedColor = Color.red;
@@ -66,52 +50,43 @@ public class QTEUI : MonoBehaviour
 
     void UpdateCountdown()
     {
+        if (countdownText == null) return;
+        
         float timer = qteController.GetCountdownTimer();
         float countdownDuration = 3f;
-
+        
         int remainingCount = Mathf.CeilToInt(countdownDuration - timer);
         remainingCount = Mathf.Max(0, remainingCount);
-
-        if (countdownImage != null)
+        
+        if (remainingCount > 0)
         {
-            switch (remainingCount)
-            {
-                case 3:
-                    countdownImage.sprite = countdown3Sprite;
-                    break;
-                case 2:
-                    countdownImage.sprite = countdown2Sprite;
-                    break;
-                case 1:
-                    countdownImage.sprite = countdown1Sprite;
-                    break;
-                default:
-                    countdownImage.sprite = null;
-                    break;
-            }
+            countdownText.text = remainingCount.ToString();
         }
-
-        if (instructionImage != null)
+        else
         {
-            instructionImage.sprite = getReadySprite;
+            countdownText.text = "";
+        }
+        
+        if (instructionText != null)
+        {
+            instructionText.text = countdownInstruction;
         }
     }
 
     void OnQTEStart()
     {
-      
-        //Debug.Log("QTEUI: QTE Started!");
-
-        if (countdownImage != null)
+        Debug.Log("QTEUI: QTE Started!");
+        
+        if (countdownText != null)
         {
-            countdownImage.sprite = goSprite;
+            countdownText.text = "GO!";
         }
-
-        if (instructionImage != null)
+        
+        if (instructionText != null)
         {
-            instructionImage.sprite = pressNowSprite;
+            instructionText.text = pressInstruction;
         }
-
+        
         ResetPlayerIndicators();
     }
 
@@ -136,19 +111,17 @@ public class QTEUI : MonoBehaviour
 
     void OnQTESuccess()
     {
-        if (countdownImage != null)
+        if (countdownText != null)
         {
-            // Optionally show a success image if you have one
-            countdownImage.sprite = null; // Or a successSprite
+            countdownText.text = "SUCCESS";
         }
     }
 
     void OnQTEFail()
     {
-        if (countdownImage != null)
+        if (countdownText != null)
         {
-            // Optionally show a fail image if you have one
-            countdownImage.sprite = null; // Or a failSprite
+            countdownText.text = "FAIL";
         }
     }
 }
