@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.U2D.Animation;
 
 public class LimbVisualController : MonoBehaviour
 {
@@ -12,8 +11,10 @@ public class LimbVisualController : MonoBehaviour
     [Header("Visual Settings")]
     public float rotationSpeed = 100f;
 
+    [Header("UI References")]
     private Image limbImage;
     private RectTransform limbTransform;
+
     private InputManager inputManager;
     private SkinManager skinManager;
     private BodySelectionPhase bodySelectionPhase;
@@ -34,6 +35,7 @@ public class LimbVisualController : MonoBehaviour
         limbTransform = GetComponent<RectTransform>();
 
         LoadAndDisplaySkin();
+
         SubscribeToSkinChanges();
     }
 
@@ -71,16 +73,12 @@ public class LimbVisualController : MonoBehaviour
         }
     }
 
-    void OnSkinChangedHandler(string newLabel)
+    void OnSkinChangedHandler(Sprite newSkin)
     {
-        if (limbImage != null && skinManager != null && !string.IsNullOrEmpty(newLabel))
+        if (limbImage != null && newSkin != null)
         {
-            Sprite sprite = GetSpriteFromLibrary(newLabel);
-            if (sprite != null)
-            {
-                limbImage.sprite = sprite;
-                Debug.Log($"{assignedLimb} display updated to: {newLabel}");
-            }
+            limbImage.sprite = newSkin;
+            Debug.Log($"{assignedLimb} display updated to new skin");
         }
     }
 
@@ -115,47 +113,19 @@ public class LimbVisualController : MonoBehaviour
             return;
         }
 
-        if (limbImage == null)
-        {
-            Debug.LogWarning($"No Image component! Cannot load skin for {assignedLimb}");
-            return;
-        }
+        int savedSkinIndex = skinManager.LoadSkin(assignedLimb);
 
-        string savedLabel = skinManager.LoadSkin(assignedLimb);
+        Sprite skinSprite = skinManager.GetSkinSprite(assignedLimb, savedSkinIndex);
 
-        if (!string.IsNullOrEmpty(savedLabel))
+        if (skinSprite != null && limbImage != null)
         {
-            Sprite sprite = GetSpriteFromLibrary(savedLabel);
-            if (sprite != null)
-            {
-                limbImage.sprite = sprite;
-                Debug.Log($"{assignedLimb} loaded skin: {savedLabel}");
-            }
+            limbImage.sprite = skinSprite;
+            Debug.Log($"{assignedLimb} loaded skin {savedSkinIndex}");
         }
         else
         {
-            Debug.LogWarning($"Could not load skin for {assignedLimb}");
+            Debug.LogWarning($"Could not load skin sprite for {assignedLimb}");
         }
-    }
-
-    Sprite GetSpriteFromLibrary(string labelName)
-    {
-        if (skinManager == null || skinManager.spriteLibraryAsset == null)
-        {
-            Debug.LogWarning("SkinManager or Sprite Library Asset not found!");
-            return null;
-        }
-
-        string category = skinManager.GetCategoryForLimb(assignedLimb);
-        
-        Sprite sprite = skinManager.spriteLibraryAsset.GetSprite(category, labelName);
-        
-        if (sprite == null)
-        {
-            Debug.LogWarning($"Could not find sprite for category '{category}', label '{labelName}'");
-        }
-
-        return sprite;
     }
 
     void HandleRotationInput()
@@ -178,15 +148,11 @@ public class LimbVisualController : MonoBehaviour
         LoadAndDisplaySkin();
     }
 
-    public void UpdateSkin(string labelName)
+    public void UpdateSkin(Sprite newSkin)
     {
-        if (limbImage != null && !string.IsNullOrEmpty(labelName))
+        if (limbImage != null && newSkin != null)
         {
-            Sprite sprite = GetSpriteFromLibrary(labelName);
-            if (sprite != null)
-            {
-                limbImage.sprite = sprite;
-            }
+            limbImage.sprite = newSkin;
         }
     }
 
@@ -197,6 +163,7 @@ public class LimbVisualController : MonoBehaviour
 
     public void ResetRotation()
     {
+    
         currentRotation = 0f;
         if (limbTransform != null)
         {
