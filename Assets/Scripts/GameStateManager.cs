@@ -136,9 +136,10 @@ public class GameStateManager : MonoBehaviour
                     hidingPhaseController.StopHiding();
                 }
                 
+                // destroy all objects when leaving hiding phase - fresh objects next round
                 if (hidingObjectManager != null)
                 {
-                    hidingObjectManager.HideAllObjects();
+                    hidingObjectManager.DestroyAllObjects();
                 }
                 
                 if(playerAnimator != null)
@@ -194,11 +195,19 @@ public class GameStateManager : MonoBehaviour
     {
         if (runningPhaseController != null)
         {
-            // generate hiding objects at the start of running phase
+            //  3 fresh random objects for this round (destroys old ones)
             if (hidingObjectManager != null)
             {
                 currentHidingObjects = hidingObjectManager.GenerateObjects();
-                Debug.Log("Generated hiding objects for this round");
+                
+                // update preview UI with the new random objects
+                if (wallSelectionUI != null && currentHidingObjects != null)
+                {
+                    wallSelectionUI.LoadObjectPreviews(currentHidingObjects);
+                    Debug.Log("Updated wall selection UI with new random objects");
+                }
+                
+                Debug.Log("=== New round: Generated fresh hiding objects ===");
             }
             else
             {
@@ -234,6 +243,7 @@ public class GameStateManager : MonoBehaviour
     {
         if (hidingPhaseController != null)
         {
+            // enable only the selected hiding object
             if (runningPhaseController != null && hidingObjectManager != null)
             {
                 int selectedIndex = runningPhaseController.GetSelectedWallIndex();
@@ -315,6 +325,12 @@ public class GameStateManager : MonoBehaviour
         Debug.Log("Hiding phase succeeded!");
         wallsCompleted++;
         
+        // Destroy objects for this round - fresh objects will be generated next round
+        if (hidingObjectManager != null)
+        {
+            hidingObjectManager.DestroyAllObjects();
+        }
+        
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
     }
@@ -323,9 +339,15 @@ public class GameStateManager : MonoBehaviour
     {
         LoseHeart();
         Debug.Log("Hiding phase failed! Retrying...");
+        
+        // destroy objects for this round - fresh objects will be generated next round
+        if (hidingObjectManager != null)
+        {
+            hidingObjectManager.DestroyAllObjects();
+        }
+        
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
-        // could implement lives/game over here
     }
 
     void IncreaseDifficulty()
@@ -396,6 +418,7 @@ public class GameStateManager : MonoBehaviour
         return currentDifficulty;
     }
 
+    // external methods
     public void RestartGame()
     {
         StartGame();

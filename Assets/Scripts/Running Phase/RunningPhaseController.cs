@@ -56,25 +56,10 @@ public class RunningPhaseController : MonoBehaviour
             return;
         }
 
-        // Verify controller connections
-        VerifyControllers();
-
         currentPromptInterval = basePromptInterval;
         currentSpeed = baseSpeed;
 
         StartRunning();
-    }
-
-    void VerifyControllers()
-    {
-        Debug.Log("=== CONTROLLER VERIFICATION ===");
-        for (int i = 0; i < 5; i++)
-        {
-            InputManager.LimbPlayer limb = (InputManager.LimbPlayer)i;
-            bool connected = inputManager.IsControllerConnected(i);
-            Debug.Log($"{limb} (Index {i}): {(connected ? "CONNECTED" : "NOT CONNECTED")}");
-        }
-        Debug.Log("================================");
     }
 
     void Update()
@@ -82,10 +67,8 @@ public class RunningPhaseController : MonoBehaviour
         if (!isRunning) return;
 
         currentPromptInterval = Mathf.Max(0.5f, currentPromptInterval - (difficultyIncreaseRate * Time.deltaTime));
-        // Check head player input for wall selection
         CheckHeadInput();
 
-        // Check limb inputs for rhythm game
         if (currentPromptLimb != "")
         {
             CheckPlayerInputs();
@@ -143,6 +126,7 @@ public class RunningPhaseController : MonoBehaviour
         // Left input - previous wall
         if (headInput < -0.5f)
         {
+            int oldIndex = selectedWallIndex;
             selectedWallIndex--;
             if (selectedWallIndex < 0)
             {
@@ -150,11 +134,12 @@ public class RunningPhaseController : MonoBehaviour
             }
             lastWallSelectionTime = Time.time;
             OnWallSelectionChange?.Invoke(selectedWallIndex);
-            Debug.Log($"Head selected wall: {selectedWallIndex}");
+            Debug.Log($">>> Head selected LEFT: {oldIndex} → {selectedWallIndex}");
         }
         // Right input - next wall
         else if (headInput > 0.5f)
         {
+            int oldIndex = selectedWallIndex;
             selectedWallIndex++;
             if (selectedWallIndex >= numberOfWalls)
             {
@@ -162,7 +147,7 @@ public class RunningPhaseController : MonoBehaviour
             }
             lastWallSelectionTime = Time.time;
             OnWallSelectionChange?.Invoke(selectedWallIndex);
-            Debug.Log($"Head selected wall: {selectedWallIndex}");
+            Debug.Log($">>> Head selected RIGHT: {oldIndex} → {selectedWallIndex}");
         }
     }
 
@@ -170,7 +155,6 @@ public class RunningPhaseController : MonoBehaviour
     {
         if (inputManager == null) return;
 
-        // Check each limb to see if it pressed (0-3, skip head)
         for (int i = 0; i < 4; i++)
         {
             InputManager.LimbPlayer limb = (InputManager.LimbPlayer)i;
@@ -184,7 +168,7 @@ public class RunningPhaseController : MonoBehaviour
                 }
 
                 OnPlayerInput(limbName);
-                return; // Only process one input per frame
+                return;
             }
         }
     }
@@ -201,7 +185,6 @@ public class RunningPhaseController : MonoBehaviour
 
     public void OnPlayerInput(string limbName)
     {
-        // Check if this is the correct limb responding
         if (currentPromptLimb != limbName)
         {
             if (showInputDebug)
@@ -260,6 +243,7 @@ public class RunningPhaseController : MonoBehaviour
         currentPatternIndex = 0;
         currentPromptLimb = "";
         selectedWallIndex = 0;
+        Debug.Log(">>> RunningPhase: selectedWallIndex reset to 0 (player can now select during running phase)");
         nextPromptTime = Time.time + 1f;
         Debug.Log("Running phase started!");
     }
@@ -268,6 +252,7 @@ public class RunningPhaseController : MonoBehaviour
     {
         isRunning = false;
         currentPromptLimb = "";
+        Debug.Log($">>> RunningPhase STOPPED. Final selection: {selectedWallIndex}");
         if (currentSpeed < 1.0f)
         {
             gameManager.LoseHeart();

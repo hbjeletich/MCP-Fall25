@@ -105,25 +105,8 @@ public class HidingPhaseController : MonoBehaviour
         
         runningPhaseController.isRunning = false;
         DoorScript.StopScroll(); // stop background scroll animation
-        
-        if (objects == null || objects.Length == 0) // if no objects generated
-        {
-            if (objectManager != null)
-            {
-                Debug.Log("Generating hiding objects...");
-                objects = objectManager.GenerateObjects(); // generates objects
 
-                foreach (var obj in objects)
-                {
-                    obj.SetAlpha(0f);
-                }
-            }
-            else
-            {
-                Debug.LogError("No object manager assigned!");
-                return;
-            }
-        }
+        objects = objectManager.GetSelectedObjects();
 
         isHiding = true; // sets hiding phase to true
         hidingTimer = 0f; // begins phase timer
@@ -138,15 +121,10 @@ public class HidingPhaseController : MonoBehaviour
             Debug.Log($"Current hiding object: {currentObject.name}");
         }
 
-        // SETS OTHER OBJECTS INVISIBLE
-        foreach (var obj in objects)
-        {
-            obj.SetAlpha(0f);
-        }
-
         // SETS CURRENT OBJECT VISIBLE
-        currentObject.SetAlpha(1f);
-        Debug.Log($"Made {currentObject.name} visible");
+        // currentObject.gameObject.SetActive(true);
+        // currentObject.SetAlpha(1f);
+        //Debug.Log($"Made {currentObject.name} visible");
 
         // ALLOWS FOR LIMB ROTATION
         Debug.Log("Enabling hiding mode for limbs...");
