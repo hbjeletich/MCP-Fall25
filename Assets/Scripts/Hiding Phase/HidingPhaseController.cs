@@ -18,6 +18,7 @@ public class HidingPhaseController : MonoBehaviour
     private float hidingTimer = 0f;
     public float scientistSearchCooldown;
     private bool isHiding = false;
+    private bool hasCheckedResult = false;
     private SpriteRenderer[] limbRenderers;
 
     public delegate void OnHidingStartEvent(HidingObject hidingObject);
@@ -62,9 +63,11 @@ public class HidingPhaseController : MonoBehaviour
 
         hidingTimer += Time.deltaTime; // increment phase timer
 
-        if (hidingTimer >= hidingDuration)
+        if (hidingTimer >= hidingDuration && !hasCheckedResult)
         {
-            CheckHidingResult(); // check hiding result once timer runs out
+            Debug.Log("Hiding timer expired! Checking result...");
+            hasCheckedResult = true;
+            CheckHidingResult();
         }
     }
 
@@ -98,6 +101,8 @@ public class HidingPhaseController : MonoBehaviour
     // START HIDING PHASE
     public void StartHiding()
     {
+        Debug.Log("=== STARTING HIDING PHASE ===");
+        
         runningPhaseController.isRunning = false;
         DoorScript.StopScroll(); // stop background scroll animation
         
@@ -105,6 +110,7 @@ public class HidingPhaseController : MonoBehaviour
         {
             if (objectManager != null)
             {
+                Debug.Log("Generating hiding objects...");
                 objects = objectManager.GenerateObjects(); // generates objects
 
                 foreach (var obj in objects)
@@ -121,12 +127,15 @@ public class HidingPhaseController : MonoBehaviour
 
         isHiding = true; // sets hiding phase to true
         hidingTimer = 0f; // begins phase timer
+        hasCheckedResult = false;
 
         if (runningPhaseController != null)
         {
             // SETS WALL TO WHATEVER WAS SELECTED DURING RUN PHASE
             int selectedIndex = runningPhaseController.GetSelectedWallIndex();
+            Debug.Log($"Selected wall index: {selectedIndex}");
             currentObject = objects[selectedIndex];
+            Debug.Log($"Current hiding object: {currentObject.name}");
         }
 
         // SETS OTHER OBJECTS INVISIBLE
@@ -137,21 +146,34 @@ public class HidingPhaseController : MonoBehaviour
 
         // SETS CURRENT OBJECT VISIBLE
         currentObject.SetAlpha(1f);
+        Debug.Log($"Made {currentObject.name} visible");
 
         // ALLOWS FOR LIMB ROTATION
+        Debug.Log("Enabling hiding mode for limbs...");
         foreach (var limb in limbs)
         {
-            limb.EnableHidingMode();
+            if (limb != null)
+            {
+                limb.EnableHidingMode();
+                Debug.Log($"Enabled hiding mode for {limb.limbName}");
+            }
+            else
+            {
+                Debug.LogWarning("A limb is NULL!");
+            }
         }
 
         OnHidingStart?.Invoke(currentObject);
         Debug.Log($"Hiding phase started! Round {currentObjectIndex + 1}");
+        Debug.Log($"Hiding duration: {hidingDuration} seconds");
+        Debug.Log("=== HIDING PHASE STARTED ===");
     }
 
     // STOP HIDING PHASE
     public void StopHiding()
     {
         isHiding = false; // hiding mode set to false
+        hasCheckedResult = false;
         DoorScript.StartScroll(); // starts background scroll effect
 
         // DISABLES LIMB ROTATION
@@ -169,8 +191,28 @@ public class HidingPhaseController : MonoBehaviour
         isHiding = false; // hiding mode set to false
         DoorScript.ScientistSearch(0, true);
 
-            // CHECKS IF ALL LIMBS SUCCESSFULLY HIDDEN
+        Debug.Log("=== CHECKING HIDING RESULT ===");
+        Debug.Log($"Current Object: {currentObject.name}");
+        Debug.Log($"Number of limbs to check: {limbRenderers.Length}");
+        
+        // Log each limb status
+        for (int i = 0; i < limbRenderers.Length; i++)
+        {
+            if (limbRenderers[i] != null)
+            {
+                Debug.Log($"Limb {i} ({limbs[i].limbName}): Position = {limbRenderers[i].transform.position}, IsLocked = {limbs[i].IsLocked()}");
+            }
+            else
+            {
+                Debug.LogWarning($"Limb {i} renderer is NULL!");
+            }
+        }
+
+        // CHECKS IF ALL LIMBS SUCCESSFULLY HIDDEN
         bool success = currentObject.CheckMatch(limbRenderers);
+
+        Debug.Log($"Hiding result: {(success ? "SUCCESS" : "FAILURE")}");
+        Debug.Log("=== END CHECKING HIDING RESULT ===");
 
         if (success) // SUCCESS 
         {

@@ -1984,6 +1984,11 @@ RectTransform:
   m_AnchoredPosition: {x: 435, y: 113}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!68 &472678943 stripped
+EdgeCollider2D:
+  m_CorrespondingSourceObject: {fileID: 2511568282905453734, guid: 815db5c37360946798c0e58e0444b0d3, type: 3}
+  m_PrefabInstance: {fileID: 1841051160249972606}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &480720065 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3475214931435322034, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
@@ -12703,6 +12708,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8764289234580941337, guid: 815db5c37360946798c0e58e0444b0d3, type: 3}
+      propertyPath: safeZoneCollider
+      value: 
+      objectReference: {fileID: 472678943}
     - target: {fileID: 8837827174184854032, guid: 815db5c37360946798c0e58e0444b0d3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
