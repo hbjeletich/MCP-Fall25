@@ -1991,11 +1991,10 @@ MonoBehaviour:
   qteController: {fileID: 719376203}
   DoorScript: {fileID: 652807177}
   runningPhaseDuration: 15
-  transitionDelay: 1
+  transitionDelay: 5
   totalWallsToWin: 10
   increaseDifficulty: 1
   difficultyMultiplier: 1.1
-  playerAnimator: {fileID: 486619266}
   hearts: {fileID: 1610431318}
   heartSprite: {fileID: 617041888}
   remainingHearts: 3
@@ -2564,9 +2563,17 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2158420017750257889, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_Size.x
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2158420017750257889, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1865847709218623474, guid: 78746e897624b19439a398476df8f336, type: 3}
+    - target: {fileID: 2158420017750257889, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2490815985727905119, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Layer
       value: 3
@@ -2917,7 +2924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]
@@ -10147,8 +10154,12 @@ MonoBehaviour:
   - {fileID: 1263988486}
   - {fileID: 600673290}
   selectionFrames: []
+  instructionText: {fileID: 0}
+  selectionText: {fileID: 0}
   unselectedColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.96445, g: 1, b: 0, a: 1}
+  selectedBorderColor: {r: 0, g: 1, b: 1, a: 1}
+  unselectedBorderColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   showInstructions: 1
   useColorTint: 1
   useScaling: 1

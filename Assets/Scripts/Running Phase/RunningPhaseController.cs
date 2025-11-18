@@ -255,8 +255,13 @@ public class RunningPhaseController : MonoBehaviour
         Debug.Log($">>> RunningPhase STOPPED. Final selection: {selectedWallIndex}");
         if (currentSpeed < 1.0f)
         {
+            gameManager.AnimationWalkFail();
             gameManager.LoseHeart();
             Debug.Log("Running phase failed! Speed must stay over 1.0!");
+        } else
+        {
+            gameManager.AnimationWalkSuccess();
+            Debug.Log("Running phase succeeded!");
         }
         Debug.Log("Running phase stopped!");
     }

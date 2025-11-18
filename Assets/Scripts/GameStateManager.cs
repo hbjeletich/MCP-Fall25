@@ -15,29 +15,28 @@ public class GameStateManager : MonoBehaviour
     
     [Header("Game Settings")]
     public float runningPhaseDuration = 15f; 
-    public float transitionDelay = 3f;
+    public float transitionDelay = 5f;
     public int totalWallsToWin = 10;
     
     [Header("Difficulty")]
     public bool increaseDifficulty = true;
     public float difficultyMultiplier = 1.1f;
 
-    [Header("Player Animator")]
-    public Animator playerAnimator;
+    [Header("Lives")]
+    public GameObject hearts;
+    public SpriteResolver heartSprite;
+    public int remainingHearts;
+
+    [Header("Animation")]
+    public GameObject scientistLaugh;
+    public GameObject canvas;
+    public Animator frankensteinAnimator;
     
     private GameState currentState = GameState.Idle;
     private GameState previousState = GameState.Idle;
     private int wallsCompleted = 0;
     private float currentDifficulty = 1f;
     private HidingObject[] currentHidingObjects;
-
-    public GameObject hearts;
-    public SpriteResolver heartSprite;
-    public int remainingHearts;
-
-    public GameObject scientistLaugh;
-    public GameObject canvas;
-    public Animator frankensteinAnimator;
     
     public enum GameState
     {
@@ -95,6 +94,11 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        frankensteinAnimator.SetInteger("remainingHearts", remainingHearts);
+    }
+
     public void StartGame()
     {
         wallsCompleted = 0;
@@ -142,9 +146,9 @@ public class GameStateManager : MonoBehaviour
                     hidingObjectManager.DestroyAllObjects();
                 }
                 
-                if(playerAnimator != null)
+                if(frankensteinAnimator != null)
                 {
-                    playerAnimator.enabled = true;
+                    frankensteinAnimator.enabled = true;
                 }
                 break;
             // case GameState.QTE:
@@ -165,9 +169,9 @@ public class GameStateManager : MonoBehaviour
                 break;
                 
             case GameState.Hiding:
-                if(playerAnimator != null)
+                if(frankensteinAnimator != null)
                 {
-                    playerAnimator.enabled = false;
+                    frankensteinAnimator.enabled = false;
                 }
                 
                 StartHidingPhase();
@@ -361,20 +365,11 @@ public class GameStateManager : MonoBehaviour
 
     public void LoseHeart()
     {
+        Debug.Log("LOSE HEART called!");
         remainingHearts -= 1;
-        if (heartSprite.GetLabel() == "Three Hearts")
-        {
-            heartSprite.SetCategoryAndLabel("Hearts", "Two Hearts");
-        }
-        else if (heartSprite.GetLabel() == "Two Hearts")
-        {
-            heartSprite.SetCategoryAndLabel("Hearts", "One Heart");
-        }
-        else if (heartSprite.GetLabel() == "One Heart")
-        {
-            hearts.SetActive(false);
-            HandleGameOver(false);
-        }
+
+        // wait for animation and then update heart sprite!
+        StartCoroutine(WaitAndLoseHeart());
     }
 
     void HandleGameOver(bool won)
@@ -397,6 +392,51 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitAndLoseHeart()
+    {
+        yield return new WaitForSeconds(2.2f); // wait for animation duration
+
+        frankensteinAnimator.enabled = false;
+
+        if (heartSprite.GetLabel() == "Three Hearts")
+        {
+            Debug.Log("Changing heart sprite to Two Hearts");
+            heartSprite.SetCategoryAndLabel("Hearts", "Two Hearts");
+            RefreshSpriteResolver();
+        }
+        else if (heartSprite.GetLabel() == "Two Hearts")
+        {
+            Debug.Log("Changing heart sprite to One Heart");
+            heartSprite.SetCategoryAndLabel("Hearts", "One Heart");
+            RefreshSpriteResolver();
+        }
+        else if (heartSprite.GetLabel() == "One Heart")
+        {
+            Debug.Log("Changing heart sprite to No Hearts");
+            hearts.SetActive(false);
+            HandleGameOver(false);
+        }
+
+        frankensteinAnimator.enabled = true;
+    }
+
+    private void RefreshSpriteResolver()
+    {
+        heartSprite.enabled = false;
+        heartSprite.enabled = true;
+    }
+
+    // animation events
+    public void AnimationWalkFail()
+    {
+        frankensteinAnimator.SetTrigger("walkFail");
+    }
+
+    public void AnimationWalkSuccess()
+    {
+        frankensteinAnimator.SetTrigger("walkSuccess");
+    }
+
     // getters for UI
     public GameState GetCurrentState()
     {
@@ -416,6 +456,11 @@ public class GameStateManager : MonoBehaviour
     public float GetCurrentDifficulty()
     {
         return currentDifficulty;
+    }
+
+    public float GetLives()
+    {
+        return remainingHearts;
     }
 
     // external methods
