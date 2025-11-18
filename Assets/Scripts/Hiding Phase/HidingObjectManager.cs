@@ -25,7 +25,7 @@ public class HidingObjectManager : MonoBehaviour
         }
         
         selectedObjects = new HidingObject[numberOfObjects];
-        selectedPrefabIndices = new int[numberOfObjects]; 
+        selectedPrefabIndices = new int[numberOfObjects];
         
         List<int> availableIndices = new List<int>();
         for (int i = 0; i < objectPrefabs.Length; i++)
@@ -39,12 +39,12 @@ public class HidingObjectManager : MonoBehaviour
             int prefabIndex = availableIndices[randomIndex];
             availableIndices.RemoveAt(randomIndex);
             
-            selectedPrefabIndices[i] = prefabIndex; 
+            selectedPrefabIndices[i] = prefabIndex;
             
             GameObject spawnedObj = Instantiate(objectPrefabs[prefabIndex], spawnPosition, Quaternion.identity, transform);
-            SpriteRenderer spriteRenderer = spawnedObj.GetComponent<SpriteRenderer>();
-            if(spriteRenderer != null) spriteRenderer.enabled = false;
             spawnedObj.name = $"HidingObject_{i}";
+            
+            spawnedObj.SetActive(false);
             
             HidingObject hidingObj = spawnedObj.GetComponent<HidingObject>();
             if (hidingObj == null)
@@ -54,7 +54,7 @@ public class HidingObjectManager : MonoBehaviour
             
             selectedObjects[i] = hidingObj;
             
-            Debug.Log($"Generated object {i}: {objectPrefabs[prefabIndex].name}");
+            Debug.Log($"Generated object {i}: {objectPrefabs[prefabIndex].name} (disabled)");
         }
         
         return selectedObjects;
@@ -68,5 +68,64 @@ public class HidingObjectManager : MonoBehaviour
     public int[] GetSelectedPrefabIndices()
     {
         return selectedPrefabIndices;
+    }
+    
+    public void ShowSelectedObject(int index)
+    {
+        if (selectedObjects == null)
+        {
+            Debug.LogError("HidingObjectManager: No objects have been generated yet!");
+            return;
+        }
+        
+        if (index < 0 || index >= selectedObjects.Length)
+        {
+            Debug.LogError($"HidingObjectManager: Invalid index {index}! Must be between 0 and {selectedObjects.Length - 1}");
+            return;
+        }
+        
+        for (int i = 0; i < selectedObjects.Length; i++)
+        {
+            if (selectedObjects[i] != null)
+            {
+                selectedObjects[i].gameObject.SetActive(false);
+            }
+        }
+        
+        if (selectedObjects[index] != null)
+        {
+            selectedObjects[index].gameObject.SetActive(true);
+            Debug.Log($"HidingObjectManager: Enabled hiding object {index}");
+        }
+    }
+
+    public void HideAllObjects()
+    {
+        if (selectedObjects == null) return;
+        
+        for (int i = 0; i < selectedObjects.Length; i++)
+        {
+            if (selectedObjects[i] != null)
+            {
+                selectedObjects[i].gameObject.SetActive(false);
+            }
+        }
+        
+        Debug.Log("HidingObjectManager: Disabled all hiding objects");
+    }
+
+    public HidingObject GetActiveObject()
+    {
+        if (selectedObjects == null) return null;
+        
+        foreach (var obj in selectedObjects)
+        {
+            if (obj != null && obj.gameObject.activeSelf)
+            {
+                return obj;
+            }
+        }
+        
+        return null;
     }
 }

@@ -83,7 +83,6 @@ public class WallSelectionUI : MonoBehaviour
             if (objectPreviewImages[i] == null) continue;
             if (hidingObjectManager.objectPrefabs[i] == null) continue;
 
-            // Get sprite from prefab
             GameObject prefab = hidingObjectManager.objectPrefabs[i];
             SpriteRenderer prefabSprite = prefab.GetComponent<SpriteRenderer>();
             
@@ -107,7 +106,6 @@ public class WallSelectionUI : MonoBehaviour
         UpdateSelection(currentSelection);
     }
 
-
     public void LoadObjectPreviews(HidingObject[] hidingObjects)
     {
         if (hidingObjects == null || objectPreviewImages == null) return;
@@ -130,35 +128,6 @@ public class WallSelectionUI : MonoBehaviour
                     objectPreviewImages[i].sprite = childSprite.sprite;
                     objectPreviewImages[i].enabled = true;
                 }
-            }
-        }
-
-        UpdateSelection(currentSelection);
-    }
-
-    public void LoadObjectPreviewsFromPrefabs(GameObject[] objectPrefabs, int[] selectedIndices)
-    {
-        if (objectPrefabs == null || objectPreviewImages == null || selectedIndices == null) return;
-
-        for (int i = 0; i < objectPreviewImages.Length && i < selectedIndices.Length; i++)
-        {
-            if (objectPreviewImages[i] == null) continue;
-            if (selectedIndices[i] >= objectPrefabs.Length) continue;
-
-            GameObject prefab = objectPrefabs[selectedIndices[i]];
-            if (prefab == null) continue;
-
-            // Get sprite from prefab
-            SpriteRenderer prefabSprite = prefab.GetComponent<SpriteRenderer>();
-            if (prefabSprite == null)
-            {
-                prefabSprite = prefab.GetComponentInChildren<SpriteRenderer>();
-            }
-
-            if (prefabSprite != null && prefabSprite.sprite != null)
-            {
-                objectPreviewImages[i].sprite = prefabSprite.sprite;
-                objectPreviewImages[i].enabled = true;
             }
         }
 

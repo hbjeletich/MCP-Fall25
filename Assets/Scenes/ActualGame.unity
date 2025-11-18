@@ -1986,10 +1986,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runningPhaseController: {fileID: 2111202768}
   hidingPhaseController: {fileID: 1945137885}
+  hidingObjectManager: {fileID: 859449774}
   wallSelectionUI: {fileID: 1813023859}
   qteController: {fileID: 719376203}
   DoorScript: {fileID: 652807177}
-  hidingObjectManager: {fileID: 859449774}
   runningPhaseDuration: 15
   transitionDelay: 1
   totalWallsToWin: 10
@@ -10147,12 +10147,8 @@ MonoBehaviour:
   - {fileID: 1263988486}
   - {fileID: 600673290}
   selectionFrames: []
-  instructionText: {fileID: 0}
-  selectionText: {fileID: 0}
   unselectedColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.96445, g: 1, b: 0, a: 1}
-  selectedBorderColor: {r: 0, g: 1, b: 1, a: 1}
-  unselectedBorderColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   showInstructions: 1
   useColorTint: 1
   useScaling: 1
@@ -12443,6 +12439,10 @@ PrefabInstance:
     - target: {fileID: 3195598765906231521, guid: 815db5c37360946798c0e58e0444b0d3, type: 3}
       propertyPath: m_Name
       value: Dummy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3195598765906231521, guid: 815db5c37360946798c0e58e0444b0d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3195598765906231521, guid: 815db5c37360946798c0e58e0444b0d3, type: 3}
       propertyPath: m_IsActive

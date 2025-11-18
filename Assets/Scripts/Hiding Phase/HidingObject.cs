@@ -13,6 +13,13 @@ public class HidingObject : MonoBehaviour
         {
             safeZoneCollider = GetComponent<EdgeCollider2D>();
         }
+
+        if (safeZoneCollider != null)
+        {
+            //safeZoneCollider.edgeRadius = 1f;
+        }
+
+        gameObject.layer = LayerMask.NameToLayer("Object");
     }
 
     public bool CheckMatch(SpriteRenderer[] limbRenderers)
@@ -72,9 +79,9 @@ public class HidingObject : MonoBehaviour
                     
                     Vector2 worldPixelPos = spriteRenderer.transform.TransformPoint(localPixelPos);
                     
-                    if (safeZoneCollider.OverlapPoint(worldPixelPos))   // If touching edge → fail
+                    if (Physics2D.OverlapCircle(worldPixelPos, 0.05f, LayerMask.GetMask("Object")))
                     {
-                        Debug.Log($"{spriteRenderer.name} has pixel outside safe zone at {worldPixelPos}");
+                        Debug.Log($"{spriteRenderer.name} has pixel near edge at {worldPixelPos}");
                         return false;
                     }
                 }
