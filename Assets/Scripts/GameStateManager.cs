@@ -186,12 +186,34 @@ public class GameStateManager : MonoBehaviour
                 break;
                 
             case GameState.GameOver:
+                StartGameOver();
                 HandleGameOver(false);
                 break;
                 
             case GameState.Victory:
                 HandleGameOver(true);
                 break;
+        }
+    }
+
+    public void StartGameOver()
+    {
+        // scientistLaugh.SetActive(true);
+        frankensteinAnimator.enabled = false;
+        DoorScript.StopScroll();
+        
+        scientistLaugh.SetActive(true);
+        canvas.SetActive(false);
+    }
+
+    void HandleGameOver(bool won)
+    {
+        Debug.Log(won ? "VICTORY!" : "GAME OVER!");
+        OnGameOver?.Invoke(won);
+
+        if (wallSelectionUI != null)
+        {
+            wallSelectionUI.SetVisible(false);
         }
     }
 
@@ -372,58 +394,47 @@ public class GameStateManager : MonoBehaviour
         StartCoroutine(WaitAndLoseHeart());
     }
 
-    void HandleGameOver(bool won)
-    {
-        // currently no game over it is infinite whoops
-        Debug.Log(won ? "VICTORY!" : "GAME OVER!");
-        OnGameOver?.Invoke(won);
-
-        if (!won)
-        {
-            scientistLaugh.SetActive(true);
-            frankensteinAnimator.enabled = false;
-            DoorScript.StopScroll();
-            canvas.SetActive(false);
-        }
-
-        if (wallSelectionUI != null)
-        {
-            wallSelectionUI.SetVisible(false);
-        }
-    }
-
     private IEnumerator WaitAndLoseHeart()
     {
-        yield return new WaitForSeconds(2.2f); // wait for animation duration
+        string currentLabel = heartSprite.GetLabel();
+        string newLabel = "";
 
-        frankensteinAnimator.enabled = false;
-
-        if (heartSprite.GetLabel() == "Three Hearts")
+        // Determine which heart sprite to change to
+        if (currentLabel == "Three Hearts")
         {
-            Debug.Log("Changing heart sprite to Two Hearts");
-            heartSprite.SetCategoryAndLabel("Hearts", "Two Hearts");
-            RefreshSpriteResolver();
+            newLabel = "Two Hearts";
         }
-        else if (heartSprite.GetLabel() == "Two Hearts")
+        else if (currentLabel == "Two Hearts")
         {
-            Debug.Log("Changing heart sprite to One Heart");
-            heartSprite.SetCategoryAndLabel("Hearts", "One Heart");
-            RefreshSpriteResolver();
+            newLabel = "One Heart";
         }
-        else if (heartSprite.GetLabel() == "One Heart")
+        else if (currentLabel == "One Heart")
         {
-            Debug.Log("Changing heart sprite to No Hearts");
+            for(int i = 0; i < 3; i++)
+            {
+                hearts.SetActive(false);
+                yield return new WaitForSeconds(0.2f);
+                hearts.SetActive(true);
+                yield return new WaitForSeconds(0.2f);
+            }
             hearts.SetActive(false);
-            HandleGameOver(false);
+            
+            ChangeState(GameState.GameOver);
+            yield break;
         }
 
-        frankensteinAnimator.enabled = true;
-    }
+        // Blink between current and new sprite 3 times
+        for (int i = 0; i < 3; i++)
+        {
+            heartSprite.SetCategoryAndLabel("Hearts", newLabel);
+            yield return new WaitForSeconds(0.2f);
+            heartSprite.SetCategoryAndLabel("Hearts", currentLabel);
+            yield return new WaitForSeconds(0.2f);
+        }
 
-    private void RefreshSpriteResolver()
-    {
-        heartSprite.enabled = false;
-        heartSprite.enabled = true;
+        // Finally set it to the new value permanently
+        Debug.Log($"Changing heart sprite to {newLabel}");
+        heartSprite.SetCategoryAndLabel("Hearts", newLabel);
     }
 
     public void ThrowAtPlayer(string obj)
