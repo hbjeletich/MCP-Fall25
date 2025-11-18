@@ -14,6 +14,7 @@ public class HidingObjectManager : MonoBehaviour
     public Vector3 spawnPosition = Vector3.zero;
     
     private HidingObject[] selectedObjects;
+    private int[] selectedPrefabIndices; 
 
     public HidingObject[] GenerateObjects()
     {
@@ -24,6 +25,7 @@ public class HidingObjectManager : MonoBehaviour
         }
         
         selectedObjects = new HidingObject[numberOfObjects];
+        selectedPrefabIndices = new int[numberOfObjects]; 
         
         List<int> availableIndices = new List<int>();
         for (int i = 0; i < objectPrefabs.Length; i++)
@@ -37,7 +39,11 @@ public class HidingObjectManager : MonoBehaviour
             int prefabIndex = availableIndices[randomIndex];
             availableIndices.RemoveAt(randomIndex);
             
+            selectedPrefabIndices[i] = prefabIndex; 
+            
             GameObject spawnedObj = Instantiate(objectPrefabs[prefabIndex], spawnPosition, Quaternion.identity, transform);
+            SpriteRenderer spriteRenderer = spawnedObj.GetComponent<SpriteRenderer>();
+            if(spriteRenderer != null) spriteRenderer.enabled = false;
             spawnedObj.name = $"HidingObject_{i}";
             
             HidingObject hidingObj = spawnedObj.GetComponent<HidingObject>();
@@ -57,5 +63,10 @@ public class HidingObjectManager : MonoBehaviour
     public HidingObject[] GetSelectedObjects()
     {
         return selectedObjects;
+    }
+    
+    public int[] GetSelectedPrefabIndices()
+    {
+        return selectedPrefabIndices;
     }
 }

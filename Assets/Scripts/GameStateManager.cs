@@ -12,6 +12,9 @@ public class GameStateManager : MonoBehaviour
     public QTEController qteController;
     public QTEDoors DoorScript;
     
+    [Header("Object Management")]
+    public HidingObjectManager hidingObjectManager;
+    
     [Header("Game Settings")]
     public float runningPhaseDuration = 15f; 
     public float transitionDelay = 3f;
@@ -28,6 +31,8 @@ public class GameStateManager : MonoBehaviour
     private GameState previousState = GameState.Idle;
     private int wallsCompleted = 0;
     private float currentDifficulty = 1f;
+
+    private HidingObject[] currentHidingObjects;
 
     public GameObject hearts;
     public SpriteResolver heartSprite;
@@ -73,7 +78,6 @@ public class GameStateManager : MonoBehaviour
             wallSelectionUI.SetVisible(false);
         }
 
-        // FOR NOW auto start
         StartGame();
         remainingHearts = 3;
     }
@@ -138,8 +142,6 @@ public class GameStateManager : MonoBehaviour
                     playerAnimator.enabled = true;
                 }
                 break;
-            // case GameState.QTE:
-            //     // nothing special
         }
     }
 
@@ -186,13 +188,23 @@ public class GameStateManager : MonoBehaviour
     {
         if (runningPhaseController != null)
         {
-            if (increaseDifficulty)
+            if (hidingObjectManager != null)
             {
-                // could modify running controller's speed/timing based on difficulty
+                currentHidingObjects = hidingObjectManager.GenerateObjects();
+                
+                if (wallSelectionUI != null && currentHidingObjects != null)
+                {
+                    wallSelectionUI.LoadObjectPreviews(currentHidingObjects);
+                    Debug.Log("Loaded object previews into WallSelectionUI");
+                }
             }
+            else
+            {
+                Debug.LogError("HidingObjectManager not assigned!");
+            }
+
             
             runningPhaseController.StartRunning();
-            
             StartCoroutine(RunningPhaseTimer());
         }
         else
@@ -215,8 +227,16 @@ public class GameStateManager : MonoBehaviour
     {
         if (hidingPhaseController != null)
         {
+
+            if (runningPhaseController != null && currentHidingObjects != null)
+            {
+                int selectedIndex = runningPhaseController.GetSelectedWallIndex();
+                HidingObject selectedObject = currentHidingObjects[selectedIndex];
+                
+                Debug.Log($"Player selected hiding object {selectedIndex}");
+            }
+            
             hidingPhaseController.StartHiding();
-            // hiding phase handles its own timer and completion
         }
         else
         {
@@ -298,7 +318,6 @@ public class GameStateManager : MonoBehaviour
         Debug.Log("Hiding phase failed! Retrying...");
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
-        // could implement lives/game over here
     }
 
     void IncreaseDifficulty()
@@ -330,7 +349,6 @@ public class GameStateManager : MonoBehaviour
 
     void HandleGameOver(bool won)
     {
-        // currently no game over it is infinite whoops
         Debug.Log(won ? "VICTORY!" : "GAME OVER!");
         OnGameOver?.Invoke(won);
 
@@ -348,7 +366,6 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
-    // getters for UI
     public GameState GetCurrentState()
     {
         return currentState;
@@ -368,8 +385,12 @@ public class GameStateManager : MonoBehaviour
     {
         return currentDifficulty;
     }
+    
+    public HidingObject[] GetCurrentHidingObjects()
+    {
+        return currentHidingObjects;
+    }
 
-    // external methods
     public void RestartGame()
     {
         StartGame();
