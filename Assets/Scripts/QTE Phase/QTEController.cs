@@ -249,10 +249,12 @@ public class QTEController : MonoBehaviour
 
         if(success)
         {
+            gameManager.AnimationDodgeSuccess();
             DoorScript.DodgeObject();
         }
         else
         {
+            gameManager.AnimationDodgeFail();
             DoorScript.HitObject();
         }
 

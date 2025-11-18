@@ -426,6 +426,27 @@ public class GameStateManager : MonoBehaviour
         heartSprite.enabled = true;
     }
 
+    public void ThrowAtPlayer(string obj)
+    {
+        bool dodgingRight = true;
+        switch(obj)
+        {
+            case "bottle":
+                dodgingRight = false;
+                break;
+            case "garlic":
+                dodgingRight = false;
+                break;
+            case "hammer":
+                break;
+            case "orange":
+                break;
+        }
+
+        if(dodgingRight) frankensteinAnimator.SetBool("DodgeRight", true);
+        else frankensteinAnimator.SetBool("DodgeRight", false);
+    }
+
     // animation events
     public void AnimationWalkFail()
     {
@@ -435,6 +456,16 @@ public class GameStateManager : MonoBehaviour
     public void AnimationWalkSuccess()
     {
         frankensteinAnimator.SetTrigger("walkSuccess");
+    }
+
+    public void AnimationDodgeFail()
+    {
+        frankensteinAnimator.SetTrigger("dodgeFail");
+    }
+
+    public void AnimationDodgeSuccess()
+    {
+        frankensteinAnimator.SetTrigger("dodgeSuccess");
     }
 
     // getters for UI

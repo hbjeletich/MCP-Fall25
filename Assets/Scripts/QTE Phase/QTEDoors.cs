@@ -48,6 +48,7 @@ public class QTEDoors : MonoBehaviour
     // PHASE CONTROLLER SCRIPT REFERENCES
     public RunningPhaseController runController;
     public HidingPhaseController hidingController;
+    public GameStateManager gameManager;
 
     // SCROLLING MATERIALS
     public Material scrollingWall;
@@ -341,6 +342,7 @@ public class QTEDoors : MonoBehaviour
                 value = doorZPositions[i];
             }
         }
+
         // DEPENDING ON HOW MANY OBJECTS HAVE HIT PLAYER, SCIENTIST RUNS OUT OF CLOSER DOOR
         index += doorDepth;
         if (index >= 4)
@@ -388,6 +390,8 @@ public class QTEDoors : MonoBehaviour
             Invoke("SetObjectThrownActive", 0.5f);
             Invoke("HideScientist", 1.5f);
         }
+
+        gameManager.ThrowAtPlayer(objectThrown);
 
     }
 

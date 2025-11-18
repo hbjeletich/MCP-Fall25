@@ -2924,7 +2924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8472096919072990584, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]
@@ -3683,6 +3683,7 @@ MonoBehaviour:
   objectMoveAmount: 0
   runController: {fileID: 2111202768}
   hidingController: {fileID: 1945137885}
+  gameManager: {fileID: 0}
   scrollingWall: {fileID: -876546973899608171, guid: e3e9cd8414db2ae4ab03319c79868c10, type: 3}
   scrollingFloor: {fileID: -876546973899608171, guid: bcb8e861659570549a273a5802334773, type: 3}
   scrollingCeiling: {fileID: -876546973899608171, guid: 803082eb6c063454196c754924c76b00, type: 3}
@@ -4875,6 +4876,7 @@ Transform:
   - {fileID: 418302834}
   - {fileID: 256763371}
   - {fileID: 1383689412}
+  - {fileID: 1367929463}
   - {fileID: 1559253064}
   - {fileID: 1044485623}
   m_Father: {fileID: 659620345}
@@ -8289,12 +8291,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367929460}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.25, z: -4.2}
-  m_LocalScale: {x: 0.6832313, y: 0.6832313, z: 0.6832313}
+  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 55.44554, y: 14.2878895, z: -0.648118}
+  m_LocalScale: {x: 2.0814357, y: 1.185058, z: 2.0814357}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 759862251}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1383689411
 GameObject:
@@ -12761,7 +12763,6 @@ SceneRoots:
   - {fileID: 1622359349}
   - {fileID: 1909235825}
   - {fileID: 659620345}
-  - {fileID: 1367929463}
   - {fileID: 1841051160249972606}
   - {fileID: 396833800848744606}
   - {fileID: 8882700831324394024}
