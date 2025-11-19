@@ -2532,21 +2532,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 869821755803410384, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_labelHash
+      value: 4.8864182e-24
+      objectReference: {fileID: 0}
+    - target: {fileID: 869821755803410384, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_SpriteHash
+      value: 265883184
+      objectReference: {fileID: 0}
     - target: {fileID: 3641580366413220556, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1145813847456508972, guid: 78746e897624b19439a398476df8f336, type: 3}
+      objectReference: {fileID: 9036415359851833896, guid: 78746e897624b19439a398476df8f336, type: 3}
+    - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_AutoRebind
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_BoneTransforms.Array.data[0]
+      value: 
+      objectReference: {fileID: 586305879}
+    - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_BoneTransforms.Array.data[2]
+      value: 
+      objectReference: {fileID: 586305881}
+    - target: {fileID: 6625364710066335264, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 8931807314850972328, guid: 78746e897624b19439a398476df8f336, type: 3}
     - target: {fileID: 7024235104823847630, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Name
       value: Frankenstein Body
       objectReference: {fileID: 0}
     - target: {fileID: 7636853583289313572, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_labelHash
-      value: 7.575396e-26
+      value: 1.3523755e-27
       objectReference: {fileID: 0}
     - target: {fileID: 7636853583289313572, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
-      value: 153528205
+      value: 271578679
       objectReference: {fileID: 0}
     - target: {fileID: 8192893557834642093, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2593,6 +2617,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+--- !u!4 &586305879 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1516772541081742402, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+  m_PrefabInstance: {fileID: 586305877}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &586305881 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6789878244862098572, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+  m_PrefabInstance: {fileID: 586305877}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &598743788
 GameObject:
   m_ObjectHideFlags: 0
