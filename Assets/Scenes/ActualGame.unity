@@ -3363,11 +3363,11 @@ PrefabInstance:
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[0]
       value: 
-      objectReference: {fileID: 586305880}
+      objectReference: {fileID: 586305879}
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[1]
       value: 
-      objectReference: {fileID: 586305879}
+      objectReference: {fileID: 586305880}
     - target: {fileID: 5208287775529196542, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_BoneTransforms.Array.data[2]
       value: 
@@ -3376,6 +3376,10 @@ PrefabInstance:
       propertyPath: m_BoneTransforms.Array.data[3]
       value: 
       objectReference: {fileID: 586305882}
+    - target: {fileID: 5327164721114160050, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_AutoRebind
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5705390237398161309, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Layer
       value: 3
