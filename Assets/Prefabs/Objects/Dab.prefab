@@ -100,6 +100,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   safeZoneCollider: {fileID: 0}
   safeZoneOffset: {x: 0, y: -1.94, z: 0}
+  pixelCheckStep: 3
+  requiredInsidePercentage: 55
+  showDetailedDebug: 0
 --- !u!60 &3891600901493945715
 PolygonCollider2D:
   m_ObjectHideFlags: 0

@@ -47,7 +47,7 @@ public class PlayerLimbController : MonoBehaviour
 
         if (inputManager.GetLimbLockButtonDown(limbPlayer) && !isLocked)
         {
-            LockLimb();
+            //LockLimb();
         }
     }
 

@@ -144,6 +144,10 @@ public class HidingObject : MonoBehaviour
                         result.insidePixels++;
                     }
                 }
+                else
+                {
+                    Debug.Log("Skipping transparent pixel");
+                }
             }
         }
 

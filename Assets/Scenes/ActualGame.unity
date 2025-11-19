@@ -2509,8 +2509,8 @@ MonoBehaviour:
   hidingInstructionPanel: {fileID: 795332533}
   qteInstructionPanel: {fileID: 1723548465}
   instructionDisplayTime: 3
-  preInstructionDelay: 2
-  postInstructionDelay: 2
+  preInstructionDelay: 1
+  postInstructionDelay: 1
 --- !u!4 &506913337
 Transform:
   m_ObjectHideFlags: 0
