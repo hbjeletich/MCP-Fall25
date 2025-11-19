@@ -6,6 +6,7 @@ public class HidingObject : MonoBehaviour
 {
     [Header("Safe Zone")]
     public EdgeCollider2D safeZoneCollider;
+    public Vector3 safeZoneOffset = new Vector3 (0, -2.93f, 0);
 
     void Awake()
     {

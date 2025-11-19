@@ -10,9 +10,6 @@ public class HidingObjectManager : MonoBehaviour
     [Header("Selection Settings")]
     public int numberOfObjects = 3;
     
-    [Header("Spawn Settings")]
-    public Vector3 spawnPosition = Vector3.zero;
-    
     private HidingObject[] selectedObjects;
     private int[] selectedPrefabIndices;
 
@@ -47,7 +44,7 @@ public class HidingObjectManager : MonoBehaviour
             
             selectedPrefabIndices[i] = prefabIndex;
             
-            GameObject spawnedObj = Instantiate(objectPrefabs[prefabIndex], spawnPosition, Quaternion.identity, transform);
+            GameObject spawnedObj = Instantiate(objectPrefabs[prefabIndex], Vector3.zero, Quaternion.identity, transform);
             spawnedObj.name = $"HidingObject_Round{Time.frameCount}_{i}";
             
             spawnedObj.SetActive(false);
@@ -57,6 +54,8 @@ public class HidingObjectManager : MonoBehaviour
             {
                 hidingObj = spawnedObj.AddComponent<HidingObject>();
             }
+
+            spawnedObj.transform.position = hidingObj.safeZoneOffset;
             
             selectedObjects[i] = hidingObj;
             
