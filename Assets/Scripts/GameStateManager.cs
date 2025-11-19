@@ -32,6 +32,14 @@ public class GameStateManager : MonoBehaviour
     public GameObject canvas;
     public Animator frankensteinAnimator;
     
+    [Header("Instruction Panels")]
+    public GameObject runningInstructionPanel;
+    public GameObject hidingInstructionPanel;
+    public GameObject qteInstructionPanel;
+    public float instructionDisplayTime = 3f;
+    public float preInstructionDelay = 2f;
+    public float postInstructionDelay = 2f;
+    
     private GameState currentState = GameState.Idle;
     private GameState previousState = GameState.Idle;
     private int wallsCompleted = 0;
@@ -74,6 +82,8 @@ public class GameStateManager : MonoBehaviour
             wallSelectionUI.SetVisible(false);
         }
 
+        HideAllInstructionPanels();
+
         // FOR NOW auto start
         StartGame();
         remainingHearts = 3;
@@ -103,7 +113,8 @@ public class GameStateManager : MonoBehaviour
     {
         wallsCompleted = 0;
         currentDifficulty = 1f;
-        ChangeState(GameState.Running);
+        previousState = GameState.Idle; // set previous state so transition knows where we came from
+        ChangeState(GameState.Transition);
     }
 
     void ChangeState(GameState newState)
@@ -322,28 +333,84 @@ public class GameStateManager : MonoBehaviour
 
     IEnumerator TransitionCoroutine()
     {
-        yield return new WaitForSeconds(transitionDelay);
+        // Determine which phase is coming next
+        GameState nextState = GameState.Running;
         
+        if (previousState == GameState.Running)
+        {
+            nextState = GameState.Hiding;
+        }
+        else if (previousState == GameState.QTE)
+        {
+            nextState = GameState.Running;
+        }
+        else if (previousState == GameState.Hiding)
+        {
+            nextState = GameState.QTE;
+        }
+        else if (previousState == GameState.Idle)
+        {
+            nextState = GameState.Running; // Game start goes to Running
+        }
+        
+        yield return new WaitForSeconds(preInstructionDelay);
+        
+        // show instruction panel based on next state
+        ShowInstructionPanel(nextState);
+        
+        yield return new WaitForSeconds(instructionDisplayTime);
+        
+        HideAllInstructionPanels();
+        
+        yield return new WaitForSeconds(postInstructionDelay);
+        
+        // transition to next state
         if (currentState == GameState.Transition)
         {
-            // Running → Hiding → QTE → Running
-            if (previousState == GameState.Running)
-            {
-                ChangeState(GameState.Hiding);
-            }
-            else if (previousState == GameState.QTE)
-            {
-                ChangeState(GameState.Running);
-            }
-            else if (previousState == GameState.Hiding)
-            {
-                ChangeState(GameState.QTE);
-            }
-            else
-            {
-                ChangeState(GameState.Running);
-            }
+            ChangeState(nextState);
         }
+    }
+    
+    void ShowInstructionPanel(GameState nextState)
+    {
+        HideAllInstructionPanels();
+        
+        switch (nextState)
+        {
+            case GameState.Running:
+                if (runningInstructionPanel != null)
+                {
+                    runningInstructionPanel.SetActive(true);
+                    Debug.Log("Showing Running instruction panel");
+                }
+                break;
+                
+            case GameState.Hiding:
+                if (hidingInstructionPanel != null)
+                {
+                    hidingInstructionPanel.SetActive(true);
+                    Debug.Log("Showing Hiding instruction panel");
+                }
+                break;
+                
+            case GameState.QTE:
+                if (qteInstructionPanel != null)
+                {
+                    qteInstructionPanel.SetActive(true);
+                    Debug.Log("Showing QTE instruction panel");
+                }
+                break;
+        }
+    }
+    
+    void HideAllInstructionPanels()
+    {
+        if (runningInstructionPanel != null)
+            runningInstructionPanel.SetActive(false);
+        if (hidingInstructionPanel != null)
+            hidingInstructionPanel.SetActive(false);
+        if (qteInstructionPanel != null)
+            qteInstructionPanel.SetActive(false);
     }
 
     void OnHidingSuccess()
@@ -351,7 +418,7 @@ public class GameStateManager : MonoBehaviour
         Debug.Log("Hiding phase succeeded!");
         wallsCompleted++;
         
-        // Destroy objects for this round - fresh objects will be generated next round
+        // destroy objects for this round - fresh objects will be generated next round
         if (hidingObjectManager != null)
         {
             hidingObjectManager.DestroyAllObjects();
@@ -399,7 +466,7 @@ public class GameStateManager : MonoBehaviour
         string currentLabel = heartSprite.GetLabel();
         string newLabel = "";
 
-        // Determine which heart sprite to change to
+        // determine which heart sprite to change to
         if (currentLabel == "Three Hearts")
         {
             newLabel = "Two Hearts";
@@ -423,7 +490,7 @@ public class GameStateManager : MonoBehaviour
             yield break;
         }
 
-        // Blink between current and new sprite 3 times
+        // blink between current and new sprite 3 times
         for (int i = 0; i < 3; i++)
         {
             heartSprite.SetCategoryAndLabel("Hearts", newLabel);
@@ -432,7 +499,7 @@ public class GameStateManager : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
 
-        // Finally set it to the new value permanently
+        // set it to the new value permanently
         Debug.Log($"Changing heart sprite to {newLabel}");
         heartSprite.SetCategoryAndLabel("Hearts", newLabel);
     }
