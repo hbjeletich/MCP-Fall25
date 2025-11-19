@@ -94,7 +94,7 @@ ScriptedImporter:
     spritePosition: {x: 0, y: 0}
   mosaicSpriteImportData: []
   rigSpriteImportData:
-  - name: NeutralEyebrowLeft
+  - name: NeutralExpression
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -15547,8 +15547,8 @@ ScriptedImporter:
     flatten: 0
     isImported: 0
     isVisible: 1
-  - name: NeutralEyebrowLeft
-    spriteName: NeutralEyebrowLeft
+  - name: NeutralExpression
+    spriteName: NeutralExpression
     isGroup: 0
     parentIndex: 0
     spriteID: 48395ee7f040cc54fae980efcec8269d

@@ -17,38 +17,38 @@ MonoBehaviour:
     m_Hash: 130111906
     m_CategoryList: []
     m_OverrideEntries:
-    - m_Name: Head_01
-      m_Hash: 199170916
+    - m_Name: OG Head
+      m_Hash: 439765376
       m_Sprite: {fileID: -4139999316202080270, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -4139999316202080270, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: Head_02
-      m_Hash: 316033758
+    - m_Name: Short Bob Head
+      m_Hash: 734322639
       m_Sprite: {fileID: 2965100646415032252, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 2965100646415032252, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: Head_03
-      m_Hash: 634485320
+    - m_Name: Long Bob Head
+      m_Hash: 903037768
       m_Sprite: {fileID: 3559754973578865815, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 3559754973578865815, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: Head_04
-      m_Hash: 1001779179
+    - m_Name: Hat Head
+      m_Hash: 91006733
       m_Sprite: {fileID: 702970510085307786, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 702970510085307786, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: Head_05
-      m_Hash: 213049213
+    - m_Name: Mohawk Head
+      m_Hash: 32866790
       m_Sprite: {fileID: -9217687701730024887, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -9217687701730024887, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: Head_06
-      m_Hash: 364613319
+    - m_Name: Quaffed Hair Head
+      m_Hash: 428279649
       m_Sprite: {fileID: -120938394498563087, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -120938394498563087, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: Head_07
-      m_Hash: 582794833
+    - m_Name: Side Slicked Head
+      m_Hash: 1040415321
       m_Sprite: {fileID: -5820488877509005799, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -5820488877509005799, guid: 78746e897624b19439a398476df8f336, type: 3}
@@ -58,23 +58,23 @@ MonoBehaviour:
     m_Hash: 695459260
     m_CategoryList: []
     m_OverrideEntries:
-    - m_Name: RArm_01
-      m_Hash: 235158812
+    - m_Name: Zombie R Arm
+      m_Hash: 336346889
       m_Sprite: {fileID: -5589746025100323808, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -5589746025100323808, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: RArm_02
-      m_Hash: 386755750
+    - m_Name: Ballerina R Arm
+      m_Hash: 741187397
       m_Sprite: {fileID: 7026807089526247071, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 7026807089526247071, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: RArm_03
-      m_Hash: 537549872
+    - m_Name: Robot R Arm
+      m_Hash: 853520956
       m_Sprite: {fileID: 429574357310547876, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 429574357310547876, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: RArm 4
-      m_Hash: 538876373
+    - m_Name: Patchwork R Arm
+      m_Hash: 228253630
       m_Sprite: {fileID: 6332896612162834436, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 6332896612162834436, guid: 78746e897624b19439a398476df8f336, type: 3}
@@ -84,23 +84,23 @@ MonoBehaviour:
     m_Hash: 916714591
     m_CategoryList: []
     m_OverrideEntries:
-    - m_Name: LArm_01
-      m_Hash: 971365007
+    - m_Name: Zombie L Arm
+      m_Hash: 198973162
       m_Sprite: {fileID: 8810481379938032497, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 8810481379938032497, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: LArm_02
-      m_Hash: 552373045
+    - m_Name: Ballerina L Arm
+      m_Hash: 872265382
       m_Sprite: {fileID: -547312168075830642, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -547312168075830642, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: L Arm 3
-      m_Hash: 395690348
+    - m_Name: Robot L Arm
+      m_Hash: 755997663
       m_Sprite: {fileID: 1173374475494862627, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 1173374475494862627, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: LArm 3
-      m_Hash: 128348061
+    - m_Name: Patchwork L Arm
+      m_Hash: 306902621
       m_Sprite: {fileID: 366187098839907508, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 366187098839907508, guid: 78746e897624b19439a398476df8f336, type: 3}
@@ -110,23 +110,23 @@ MonoBehaviour:
     m_Hash: 949966878
     m_CategoryList: []
     m_OverrideEntries:
-    - m_Name: RLeg_01
-      m_Hash: 266831156
+    - m_Name: Zombie R Leg
+      m_Hash: 964870610
       m_Sprite: {fileID: 2290233410292476990, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 2290233410292476990, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: RLeg_02
-      m_Hash: 384750734
+    - m_Name: Ballerina R Leg
+      m_Hash: 27484574
       m_Sprite: {fileID: 8931807314850972328, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 8931807314850972328, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: R Leg 3
-      m_Hash: 415041726
+    - m_Name: Robot R Leg
+      m_Hash: 525421799
       m_Sprite: {fileID: -897918764909347523, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -897918764909347523, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: R Leg 4
-      m_Hash: 114924829
+    - m_Name: Patchwork R Leg
+      m_Hash: 538190181
       m_Sprite: {fileID: -2883042037813624560, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -2883042037813624560, guid: 78746e897624b19439a398476df8f336, type: 3}
@@ -136,23 +136,23 @@ MonoBehaviour:
     m_Hash: 659517949
     m_CategoryList: []
     m_OverrideEntries:
-    - m_Name: LLeg_01
-      m_Hash: 939942567
+    - m_Name: Zombie L Leg
+      m_Hash: 642967601
       m_Sprite: {fileID: 5646325036165778639, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 5646325036165778639, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: LLeg_02
-      m_Hash: 554644253
+    - m_Name: Ballerina L Leg
+      m_Hash: 510871677
       m_Sprite: {fileID: -891330990940733205, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -891330990940733205, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: L Leg 3
-      m_Hash: 794619693
+    - m_Name: Robot L Leg
+      m_Hash: 8480004
       m_Sprite: {fileID: -9155814637377829634, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -9155814637377829634, guid: 78746e897624b19439a398476df8f336, type: 3}
-    - m_Name: L Leg 4
-      m_Hash: 825784974
+    - m_Name: Patchwork L Leg
+      m_Hash: 1069811846
       m_Sprite: {fileID: -6895783187873776210, guid: 78746e897624b19439a398476df8f336, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -6895783187873776210, guid: 78746e897624b19439a398476df8f336, type: 3}
@@ -222,5 +222,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 4
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638991690188148750
+  m_ModificationHash: 638991694520716143
   m_Version: 1
