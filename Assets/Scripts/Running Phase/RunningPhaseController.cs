@@ -18,6 +18,7 @@ public class RunningPhaseController : MonoBehaviour
     public float currentSpeed = 5f;
     public float speedBonusMultiplier = 1.2f;
     public float speedPenaltyMultiplier = 0.8f;
+    public float winningSpeedThreshold = 2.0f;
 
     [Header("Wall Selection")]
     public int numberOfWalls = 3;
@@ -255,11 +256,11 @@ public class RunningPhaseController : MonoBehaviour
         isRunning = false;
         currentPromptLimb = "";
         Debug.Log($">>> RunningPhase STOPPED. Final selection: {selectedWallIndex}");
-        if (currentSpeed < 1.0f)
+        if (currentSpeed < winningSpeedThreshold)
         {
             gameManager.AnimationWalkFail();
             gameManager.LoseHeart();
-            Debug.Log("Running phase failed! Speed must stay over 1.0!");
+            Debug.Log($"Running phase failed! Speed must stay over {winningSpeedThreshold}!");
         } else
         {
             gameManager.AnimationWalkSuccess();
