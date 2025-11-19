@@ -213,8 +213,10 @@ public class GameStateManager : MonoBehaviour
         frankensteinAnimator.enabled = false;
         DoorScript.StopScroll();
         
-        scientistLaugh.SetActive(true);
+        Instantiate(scientistLaugh, new Vector3(0, 0, 0), Quaternion.identity);
         canvas.SetActive(false);
+
+        Invoke("GoToStartMenu", 4f);
     }
 
     void HandleGameOver(bool won)
@@ -523,6 +525,11 @@ public class GameStateManager : MonoBehaviour
 
         if(dodgingRight) frankensteinAnimator.SetBool("DodgeRight", true);
         else frankensteinAnimator.SetBool("DodgeRight", false);
+    }
+
+    void GoToStartMenu()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("StartingScene");
     }
 
     // animation events

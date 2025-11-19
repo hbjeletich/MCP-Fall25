@@ -392,6 +392,7 @@ public class QTEDoors : MonoBehaviour
         }
 
         gameManager.ThrowAtPlayer(objectThrown);
+        AudioManager.Instance.PlayScientistThrowing();
 
     }
 

@@ -10,6 +10,7 @@ public class AudioManager : MonoBehaviour
     public AmbienceController ambienceController;
     public MonsterAudioController monsterAudioController;
     public PhaseAudioController phaseAudioController;
+    public ScientistAudioController scientistAudioController;
     
     [Header("Game State Manager")]
     public GameStateManager gameStateManager;
@@ -64,6 +65,10 @@ public class AudioManager : MonoBehaviour
                 break;
                 
             case GameStateManager.GameState.Running:
+                if (scientistAudioController != null)
+                {
+                    scientistAudioController.StartRunningPhase();
+                }
                 break;
                 
             case GameStateManager.GameState.Hiding:
@@ -71,15 +76,40 @@ public class AudioManager : MonoBehaviour
                 {
                     monsterAudioController.StartHidingPhase();
                 }
+                if (scientistAudioController != null)
+                {
+                    scientistAudioController.PlayCreepyLaugh();
+                }
+                if (scientistAudioController != null)
+                {
+                    scientistAudioController.StartHallwayRun();
+                }
                 break;
                 
             case GameStateManager.GameState.QTE:
+                if (scientistAudioController != null)
+                {
+                    scientistAudioController.StartHallwayRun();
+                }
                 break;
                 
             case GameStateManager.GameState.Transition:
+                if (scientistAudioController != null)
+                {
+                    scientistAudioController.StopRunningPhase();
+                }
+                if (scientistAudioController != null)
+                {
+                    scientistAudioController.StopHallwayRun();
+                }
                 break;
                 
             case GameStateManager.GameState.GameOver:
+                if (scientistAudioController != null)
+                {
+                    scientistAudioController.PlayCreepyLaugh();
+                }
+                break;
             case GameStateManager.GameState.Victory:
                 StopAllGameplayAudio();
                 break;
@@ -114,6 +144,11 @@ public class AudioManager : MonoBehaviour
         if (phaseAudioController != null)
         {
             phaseAudioController.StopAllQTEAudio();
+        }
+        
+        if (scientistAudioController != null)
+        {
+            scientistAudioController.StopAllScientistAudio();
         }
     }
     
@@ -178,6 +213,14 @@ public class AudioManager : MonoBehaviour
         if (ambienceController != null)
         {
             ambienceController.ToggleChainsRattling(enable);
+        }
+    }
+    
+    public void PlayScientistThrowing()
+    {
+        if (scientistAudioController != null)
+        {
+            scientistAudioController.PlayThrowing();
         }
     }
 }

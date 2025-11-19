@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2742661806437508377}
   - component: {fileID: 3500171736793695015}
   - component: {fileID: 4109129646301114480}
-  - component: {fileID: 5740850395513323949}
+  - component: {fileID: 5230386110392836062}
   m_Layer: 6
   m_Name: Bookshelf
   m_TagString: Untagged
@@ -98,10 +98,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf8f4dfa37091d4d8a0c34ac634472d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  safeZoneCollider: {fileID: 5740850395513323949}
+  safeZoneCollider: {fileID: 0}
   safeZoneOffset: {x: 0, y: -2.14, z: 0}
---- !u!68 &5740850395513323949
-EdgeCollider2D:
+--- !u!60 &5230386110392836062
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -129,18 +129,25 @@ EdgeCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 19.2, y: 10.8}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   m_Points:
-  - {x: -2.6094542, y: -5.602013}
-  - {x: -2.4952347, y: 4.6997795}
-  - {x: 2.569739, y: 4.7572412}
-  - {x: 2.650217, y: -5.573587}
-  - {x: -2.5105114, y: -5.711206}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
+    m_Paths:
+    - - {x: -2.29, y: 4.47}
+      - {x: -2.31, y: 4.45}
+      - {x: -2.31, y: -5.3399997}
+      - {x: -2.29, y: -5.3599997}
+      - {x: 2.28, y: -5.3599997}
+      - {x: 2.28, y: 4.47}
+  m_UseDelaunayMesh: 0

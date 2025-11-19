@@ -5,19 +5,35 @@ using UnityEngine;
 public class HidingObject : MonoBehaviour
 {
     [Header("Safe Zone")]
-    public EdgeCollider2D safeZoneCollider;
-    public Vector3 safeZoneOffset = new Vector3 (0, -2.93f, 0);
+    public PolygonCollider2D safeZoneCollider;
+    public Vector3 safeZoneOffset = new Vector3(0, -2.93f, 0);
+
+    [Header("Detection Settings")]
+    [Tooltip("How many pixels to skip when checking (higher = faster but less accurate)")]
+    public int pixelCheckStep = 3;
+    
+    [Tooltip("Percentage of pixels that must be inside the safe zone (0-100)")]
+    [Range(0, 100)]
+    public float requiredInsidePercentage = 90f;
+    
+    [Header("Debug")]
+    public bool showDetailedDebug = false;
 
     void Awake()
     {
         if (safeZoneCollider == null)
         {
-            safeZoneCollider = GetComponent<EdgeCollider2D>();
+            safeZoneCollider = GetComponent<PolygonCollider2D>();
         }
 
         if (safeZoneCollider != null)
         {
-            //safeZoneCollider.edgeRadius = 1f;
+            safeZoneCollider.isTrigger = true;
+            Debug.Log($"HidingObject {gameObject.name}: SafeZone collider found and set to trigger");
+        }
+        else
+        {
+            Debug.LogError($"HidingObject {gameObject.name}: NO POLYGON COLLIDER FOUND!");
         }
 
         gameObject.layer = LayerMask.NameToLayer("Object");
@@ -30,66 +46,113 @@ public class HidingObject : MonoBehaviour
             Debug.LogError("HidingObject: Safe zone collider not assigned!");
             return false;
         }
-        
+
+        Debug.Log("=== STARTING HIDING CHECK ===");
+        Debug.Log($"SafeZone Position: {safeZoneCollider.transform.position}");
+        Debug.Log($"SafeZone Bounds: {safeZoneCollider.bounds}");
+
+        int totalPixelsChecked = 0;
+        int totalPixelsInside = 0;
+
         foreach (var limbRenderer in limbRenderers)
         {
-            if (limbRenderer == null || limbRenderer.sprite == null) continue;
-            
-            if (!CheckSpritePixels(limbRenderer))
+            if (limbRenderer == null || limbRenderer.sprite == null) 
             {
-                return false;
+                Debug.LogWarning($"Skipping null limb renderer");
+                continue;
             }
+
+            var limbResult = CheckLimbPixels(limbRenderer);
+            totalPixelsChecked += limbResult.totalPixels;
+            totalPixelsInside += limbResult.insidePixels;
+
+            Debug.Log($"{limbRenderer.name}: {limbResult.insidePixels}/{limbResult.totalPixels} pixels inside ({limbResult.percentage:F1}%)");
         }
-        
-        return true;
+
+        if (totalPixelsChecked == 0)
+        {
+            Debug.LogWarning("No pixels were checked!");
+            return false;
+        }
+
+        float overallPercentage = (totalPixelsInside / (float)totalPixelsChecked) * 100f;
+        bool success = overallPercentage >= requiredInsidePercentage;
+
+        Debug.Log($"=== OVERALL RESULT ===");
+        Debug.Log($"Total: {totalPixelsInside}/{totalPixelsChecked} pixels inside ({overallPercentage:F1}%)");
+        Debug.Log($"Required: {requiredInsidePercentage}% - Result: {(success ? "SUCCESS ✓" : "FAIL ✗")}");
+
+        return success;
     }
 
-    private bool CheckSpritePixels(SpriteRenderer spriteRenderer)
+    private struct LimbCheckResult
     {
+        public int totalPixels;
+        public int insidePixels;
+        public float percentage;
+    }
+
+    private LimbCheckResult CheckLimbPixels(SpriteRenderer spriteRenderer)
+    {
+        LimbCheckResult result = new LimbCheckResult();
+        
         Sprite sprite = spriteRenderer.sprite;
         Texture2D texture = sprite.texture;
-        
+
         if (!texture.isReadable)
         {
             Debug.LogError($"Texture for {spriteRenderer.name} is not readable! Enable Read/Write in import settings.");
-            return false;
+            return result;
         }
-        
+
         Rect textureRect = sprite.textureRect;
         int startX = (int)textureRect.x;
         int startY = (int)textureRect.y;
         int width = (int)textureRect.width;
         int height = (int)textureRect.height;
-        
+
         Color[] pixels = texture.GetPixels(startX, startY, width, height);
         float pixelsPerUnit = sprite.pixelsPerUnit;
         Vector2 pivot = sprite.pivot;
-        
-        for (int y = 0; y < height; y++)
+
+        int sampleCount = 0;
+        for (int y = 0; y < height; y += pixelCheckStep)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < width; x += pixelCheckStep)
             {
                 Color pixel = pixels[y * width + x];
-                
-                if (pixel.a > 0.01f)
+
+                // only check visible pixels
+                if (pixel.a > 0.1f)
                 {
+                    result.totalPixels++;
+
+                    // convert pixel position to local space
                     Vector2 localPixelPos = new Vector2(
                         (x - pivot.x) / pixelsPerUnit,
                         (y - pivot.y) / pixelsPerUnit
                     );
-                    
+
+                    // convert to world space
                     Vector2 worldPixelPos = spriteRenderer.transform.TransformPoint(localPixelPos);
+
+                    // check if pixel is inside the safe zone
+                    bool isInside = safeZoneCollider.OverlapPoint(worldPixelPos);
                     
-                    if (Physics2D.OverlapCircle(worldPixelPos, 0.05f, LayerMask.GetMask("Object")))
+                    if (isInside)
                     {
-                        Debug.Log($"{spriteRenderer.name} has pixel near edge at {worldPixelPos}");
-                        return false;
+                        result.insidePixels++;
                     }
                 }
             }
         }
-        
-        return true;
+
+        if (result.totalPixels > 0)
+        {
+            result.percentage = (result.insidePixels / (float)result.totalPixels) * 100f;
+        }
+
+        return result;
     }
 
     public void SetAlpha(float alpha)
