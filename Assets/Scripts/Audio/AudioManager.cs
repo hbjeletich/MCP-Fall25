@@ -117,7 +117,7 @@ public class AudioManager : MonoBehaviour
         }
     }
     
-    public void PlayQTECountdown()
+    public void StartCountdownAudio()
     {
         if (phaseAudioController != null)
         {
@@ -125,7 +125,7 @@ public class AudioManager : MonoBehaviour
         }
     }
     
-    public void StopQTECountdown()
+    public void StopCountdownAudio()
     {
         if (phaseAudioController != null)
         {
@@ -133,7 +133,7 @@ public class AudioManager : MonoBehaviour
         }
     }
     
-    public void PlayQTESuccess()
+    public void PlaySuccess()
     {
         if (phaseAudioController != null)
         {
@@ -141,7 +141,7 @@ public class AudioManager : MonoBehaviour
         }
     }
     
-    public void PlayQTEFail()
+    public void PlayFail()
     {
         if (phaseAudioController != null)
         {

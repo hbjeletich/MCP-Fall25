@@ -86,6 +86,8 @@ public class QTEController : MonoBehaviour
         pressCount = 0;
         missedPlayers.Clear();
 
+        AudioManager.Instance.StartCountdownAudio();
+
         for (int i = 0; i < 5; i++)
         {
             buttonPressTimes[i] = -999f;
@@ -244,16 +246,19 @@ public class QTEController : MonoBehaviour
     // ENDS QUICK TIME EVENT
     void EndQTE(bool success)
     {
+        AudioManager.Instance.StopCountdownAudio();
         isQTEActive = false;
         hasStarted = false;
 
         if(success)
         {
+            AudioManager.Instance.PlaySuccess();
             gameManager.AnimationDodgeSuccess();
             DoorScript.DodgeObject();
         }
         else
         {
+            AudioManager.Instance.PlayFail();
             gameManager.AnimationDodgeFail();
             DoorScript.HitObject();
         }
@@ -264,6 +269,7 @@ public class QTEController : MonoBehaviour
     // ENDS QTE AFTER DELAY
     IEnumerator EndAfterDelay(bool success, float delay)
     {
+        AudioManager.Instance.StopCountdownAudio();
         // DELAY TIME
         yield return new WaitForSeconds(delay);
 

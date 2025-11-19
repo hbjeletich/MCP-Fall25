@@ -58,8 +58,6 @@ public class RunningPhaseController : MonoBehaviour
 
         currentPromptInterval = basePromptInterval;
         currentSpeed = baseSpeed;
-
-        StartRunning();
     }
 
     void Update()
@@ -205,6 +203,8 @@ public class RunningPhaseController : MonoBehaviour
 
     void HandleSuccessfulInput(float accuracy)
     {
+        AudioManager.Instance.PlaySuccess();
+
         Debug.Log($"{currentPromptLimb} pressed! Accuracy: {accuracy:F2}");
 
         if (accuracy > 0.7f)
@@ -218,6 +218,8 @@ public class RunningPhaseController : MonoBehaviour
 
     void HandleMissedPrompt()
     {
+        AudioManager.Instance.PlayFail();
+
         Debug.Log($"{currentPromptLimb} MISSED!");
 
         OnPromptExpired?.Invoke(currentPromptLimb);

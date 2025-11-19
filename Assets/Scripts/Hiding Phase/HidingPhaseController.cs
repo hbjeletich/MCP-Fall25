@@ -112,6 +112,8 @@ public class HidingPhaseController : MonoBehaviour
         hidingTimer = 0f; // begins phase timer
         hasCheckedResult = false;
 
+        AudioManager.Instance.StartCountdownAudio();
+
         if (runningPhaseController != null)
         {
             // SETS WALL TO WHATEVER WAS SELECTED DURING RUN PHASE
@@ -153,6 +155,7 @@ public class HidingPhaseController : MonoBehaviour
         isHiding = false; // hiding mode set to false
         hasCheckedResult = false;
         DoorScript.StartScroll(); // starts background scroll effect
+        AudioManager.Instance.StopCountdownAudio();
 
         // DISABLES LIMB ROTATION
         foreach (var limb in limbs)
@@ -194,6 +197,7 @@ public class HidingPhaseController : MonoBehaviour
 
         if (success) // SUCCESS 
         {
+            AudioManager.Instance.PlaySuccess();
             Debug.Log("Successfully hid!");
             OnHidingSuccess?.Invoke();
             currentObjectIndex++;
@@ -202,6 +206,7 @@ public class HidingPhaseController : MonoBehaviour
         }
         else // FAILURE
         {
+            AudioManager.Instance.PlayFail();
             Debug.Log("Failed to hide! Retrying...");
             OnHidingFail?.Invoke();
 
