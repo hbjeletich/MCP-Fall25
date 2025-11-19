@@ -2751,7 +2751,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2896163981771122820, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_SpriteHash
-      value: 243108632
+      value: 235139543
       objectReference: {fileID: 0}
     - target: {fileID: 3073292925186878587, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Layer
