@@ -8,6 +8,7 @@ public class ConstantLimbUpdates : MonoBehaviour
     [Header("Limb Settings")]
     public InputManager.LimbPlayer limbPlayer;
     private SpriteResolver spriteResolver;
+    private SpriteSkin spriteSkin;
 
     void Start()
     {
@@ -16,6 +17,14 @@ public class ConstantLimbUpdates : MonoBehaviour
         if (spriteResolver == null)
         {
             Debug.LogError($"{gameObject.name}: No SpriteResolver found on the GameObject. Needed for ConstantLimbUpdates.");
+            return;
+        }
+
+        spriteSkin = GetComponent<SpriteSkin>();
+
+        if (spriteSkin == null)
+        {
+            Debug.LogError($"{gameObject.name}: No SpriteSkin found on the GameObject. Needed for ConstantLimbUpdates.");
             return;
         }
     }
@@ -36,5 +45,8 @@ public class ConstantLimbUpdates : MonoBehaviour
         {
             spriteResolver.SetCategoryAndLabel(category, savedLabel);
         }
+
+        spriteSkin.autoRebind = false;
+        spriteSkin.autoRebind = true;
     }
 }
