@@ -22,11 +22,13 @@ public class PlayerLimbController : MonoBehaviour
 
     private InputManager inputManager;
     private SpriteResolver spriteResolver;
+    private SpriteSkin spriteSkin;
 
     void Start()
     {
         inputManager = InputManager.Instance;
         spriteResolver = GetComponent<SpriteResolver>();
+        spriteSkin = GetComponent<SpriteSkin>();
         LoadSavedSkin();
         
         if (ikTarget == null || pivotPoint == null)
@@ -47,7 +49,7 @@ public class PlayerLimbController : MonoBehaviour
 
         if (inputManager.GetLimbLockButtonDown(limbPlayer) && !isLocked)
         {
-            LockLimb();
+            //LockLimb();
         }
     }
 
@@ -84,6 +86,9 @@ public class PlayerLimbController : MonoBehaviour
         {
             spriteResolver.SetCategoryAndLabel(category, savedLabel);
         }
+
+        spriteSkin.autoRebind = false;
+        spriteSkin.autoRebind = true;
     }
 
     public void ChangeSkin(string labelName)

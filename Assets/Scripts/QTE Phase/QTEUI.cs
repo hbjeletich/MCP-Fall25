@@ -10,11 +10,6 @@ public class QTEUI : MonoBehaviour
 {
     [Header("References")]
     public QTEController qteController;
-    public TextMeshProUGUI countdownText;
-    public TextMeshProUGUI instructionText;
-    public string countdownInstruction = "Get Ready!";
-    public string pressInstruction = "PRESS NOW!";
-    //sloane adding new code below this point
     public Image countdownImage;
     public Image instructionImage;
 
@@ -27,12 +22,12 @@ public class QTEUI : MonoBehaviour
     [Header("Instruction Sprites")]
     public Sprite getReadySprite;
     public Sprite pressNowSprite;
-    //sloane code finished here
 
     [Header("Player Indicators")]
     public Image[] playerIndicators; // 5 indicators
-    public Color notPressedColor = Color.red;
-    public Color pressedColor = Color.green;
+    public Sprite beforeGameSprite;
+    public Sprite notPressedSprite;
+    public Sprite pressedSprite;
 
     void Start()
     {
@@ -40,9 +35,12 @@ public class QTEUI : MonoBehaviour
         {
             qteController.OnQTEStart += OnQTEStart;
             qteController.OnPlayerPress += OnPlayerPressed;
+            qteController.OnPlayerMiss += OnPlayerMissed;
+            qteController.OnQTESuccess += OnQTESuccess;
+            qteController.OnQTEFail += OnQTEFail;
         }
         
-        ResetPlayerIndicators();
+        ResetUI();
     }
 
     void OnDestroy()
@@ -51,6 +49,9 @@ public class QTEUI : MonoBehaviour
         {
             qteController.OnQTEStart -= OnQTEStart;
             qteController.OnPlayerPress -= OnPlayerPressed;
+            qteController.OnPlayerMiss -= OnPlayerMissed;
+            qteController.OnQTESuccess -= OnQTESuccess;
+            qteController.OnQTEFail -= OnQTEFail;
         }
     }
 
@@ -60,7 +61,14 @@ public class QTEUI : MonoBehaviour
         
         if (qteController.IsQTEActive() && !qteController.HasStarted())
         {
+            ResetPlayerIndicators();
             UpdateCountdown();
+        }
+
+        // reset UI when QTE is not active
+        else if (!qteController.IsQTEActive())
+        {
+            ClearSprites();
         }
     }
 
@@ -74,6 +82,7 @@ public class QTEUI : MonoBehaviour
 
         if (countdownImage != null)
         {
+            countdownImage.enabled = true;
             switch (remainingCount)
             {
                 case 3:
@@ -93,22 +102,24 @@ public class QTEUI : MonoBehaviour
 
         if (instructionImage != null)
         {
+            instructionImage.enabled = true;
             instructionImage.sprite = getReadySprite;
         }
     }
 
     void OnQTEStart()
     {
-      
         //Debug.Log("QTEUI: QTE Started!");
 
         if (countdownImage != null)
         {
+            countdownImage.enabled = true;
             countdownImage.sprite = goSprite;
         }
 
         if (instructionImage != null)
         {
+            instructionImage.enabled = true;
             instructionImage.sprite = pressNowSprite;
         }
 
@@ -120,7 +131,15 @@ public class QTEUI : MonoBehaviour
         if (playerIndex < 0 || playerIndex >= playerIndicators.Length) return;
         if (playerIndicators[playerIndex] == null) return;
         
-        playerIndicators[playerIndex].color = pressedColor;
+        playerIndicators[playerIndex].sprite = pressedSprite;
+    }
+
+    void OnPlayerMissed(int playerIndex)
+    {
+        if (playerIndex < 0 || playerIndex >= playerIndicators.Length) return;
+        if (playerIndicators[playerIndex] == null) return;
+        
+        playerIndicators[playerIndex].sprite = notPressedSprite;
     }
 
     void ResetPlayerIndicators()
@@ -129,26 +148,47 @@ public class QTEUI : MonoBehaviour
         {
             if (playerIndicators[i] != null)
             {
-                playerIndicators[i].color = notPressedColor;
+                playerIndicators[i].sprite = beforeGameSprite;
             }
         }
     }
 
     void OnQTESuccess()
     {
-        if (countdownImage != null)
-        {
-            // Optionally show a success image if you have one
-            countdownImage.sprite = null; // Or a successSprite
-        }
+        // show success feedback briefly before clearing
+        StartCoroutine(ClearUIAfterDelay(0.5f));
     }
 
-    void OnQTEFail()
+    void OnQTEFail(List<int> missedPlayers)
+    {
+        // show fail feedback briefly before clearing
+        StartCoroutine(ClearUIAfterDelay(0.5f));
+    }
+
+    IEnumerator ClearUIAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ClearSprites();
+    }
+
+    void ClearSprites()
     {
         if (countdownImage != null)
         {
-            // Optionally show a fail image if you have one
-            countdownImage.sprite = null; // Or a failSprite
+            countdownImage.sprite = null;
+            countdownImage.enabled = false;
         }
+        
+        if (instructionImage != null)
+        {
+            instructionImage.sprite = null;
+            instructionImage.enabled = false;
+        }
+    }
+
+    void ResetUI()
+    {
+        ClearSprites();
+        ResetPlayerIndicators();
     }
 }

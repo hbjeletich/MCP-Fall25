@@ -8,34 +8,43 @@ public class GameStateManager : MonoBehaviour
     [Header("Phase Controllers")]
     public RunningPhaseController runningPhaseController;
     public HidingPhaseController hidingPhaseController;
+    public HidingObjectManager hidingObjectManager;
     public WallSelectionUI wallSelectionUI;
     public QTEController qteController;
     public QTEDoors DoorScript;
     
     [Header("Game Settings")]
     public float runningPhaseDuration = 15f; 
-    public float transitionDelay = 3f;
+    public float transitionDelay = 5f;
     public int totalWallsToWin = 10;
     
     [Header("Difficulty")]
     public bool increaseDifficulty = true;
     public float difficultyMultiplier = 1.1f;
 
-    [Header("Player Animator")]
-    public Animator playerAnimator;
+    [Header("Lives")]
+    public GameObject hearts;
+    public SpriteResolver heartSprite;
+    public int remainingHearts;
+
+    [Header("Animation")]
+    public GameObject scientistLaugh;
+    public GameObject canvas;
+    public Animator frankensteinAnimator;
+    
+    [Header("Instruction Panels")]
+    public GameObject runningInstructionPanel;
+    public GameObject hidingInstructionPanel;
+    public GameObject qteInstructionPanel;
+    public float instructionDisplayTime = 3f;
+    public float preInstructionDelay = 2f;
+    public float postInstructionDelay = 2f;
     
     private GameState currentState = GameState.Idle;
     private GameState previousState = GameState.Idle;
     private int wallsCompleted = 0;
     private float currentDifficulty = 1f;
-
-    public GameObject hearts;
-    public SpriteResolver heartSprite;
-    public int remainingHearts;
-
-    public GameObject scientistLaugh;
-    public GameObject canvas;
-    public Animator frankensteinAnimator;
+    private HidingObject[] currentHidingObjects;
     
     public enum GameState
     {
@@ -73,6 +82,8 @@ public class GameStateManager : MonoBehaviour
             wallSelectionUI.SetVisible(false);
         }
 
+        HideAllInstructionPanels();
+
         // FOR NOW auto start
         StartGame();
         remainingHearts = 3;
@@ -93,11 +104,17 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        frankensteinAnimator.SetInteger("remainingHearts", remainingHearts);
+    }
+
     public void StartGame()
     {
         wallsCompleted = 0;
         currentDifficulty = 1f;
-        ChangeState(GameState.Running);
+        previousState = GameState.Idle; // set previous state so transition knows where we came from
+        ChangeState(GameState.Transition);
     }
 
     void ChangeState(GameState newState)
@@ -133,9 +150,16 @@ public class GameStateManager : MonoBehaviour
                 {
                     hidingPhaseController.StopHiding();
                 }
-                if(playerAnimator != null)
+                
+                // destroy all objects when leaving hiding phase - fresh objects next round
+                if (hidingObjectManager != null)
                 {
-                    playerAnimator.enabled = true;
+                    hidingObjectManager.DestroyAllObjects();
+                }
+                
+                if(frankensteinAnimator != null)
+                {
+                    frankensteinAnimator.enabled = true;
                 }
                 break;
             // case GameState.QTE:
@@ -156,9 +180,9 @@ public class GameStateManager : MonoBehaviour
                 break;
                 
             case GameState.Hiding:
-                if(playerAnimator != null)
+                if(frankensteinAnimator != null)
                 {
-                    playerAnimator.enabled = false;
+                    frankensteinAnimator.enabled = false;
                 }
                 
                 StartHidingPhase();
@@ -173,6 +197,7 @@ public class GameStateManager : MonoBehaviour
                 break;
                 
             case GameState.GameOver:
+                StartGameOver();
                 HandleGameOver(false);
                 break;
                 
@@ -182,10 +207,52 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    public void StartGameOver()
+    {
+        // scientistLaugh.SetActive(true);
+        frankensteinAnimator.enabled = false;
+        DoorScript.StopScroll();
+        
+        Instantiate(scientistLaugh, new Vector3(0, 0, 0), Quaternion.identity);
+        canvas.SetActive(false);
+
+        Invoke("GoToStartMenu", 4f);
+    }
+
+    void HandleGameOver(bool won)
+    {
+        Debug.Log(won ? "VICTORY!" : "GAME OVER!");
+        OnGameOver?.Invoke(won);
+
+        if (wallSelectionUI != null)
+        {
+            wallSelectionUI.SetVisible(false);
+        }
+    }
+
     void StartRunningPhase()
     {
         if (runningPhaseController != null)
         {
+            //  3 fresh random objects for this round (destroys old ones)
+            if (hidingObjectManager != null)
+            {
+                currentHidingObjects = hidingObjectManager.GenerateObjects();
+                
+                // update preview UI with the new random objects
+                if (wallSelectionUI != null && currentHidingObjects != null)
+                {
+                    wallSelectionUI.LoadObjectPreviews(currentHidingObjects);
+                    Debug.Log("Updated wall selection UI with new random objects");
+                }
+                
+                Debug.Log("=== New round: Generated fresh hiding objects ===");
+            }
+            else
+            {
+                Debug.LogWarning("HidingObjectManager not assigned!");
+            }
+            
             if (increaseDifficulty)
             {
                 // could modify running controller's speed/timing based on difficulty
@@ -215,6 +282,15 @@ public class GameStateManager : MonoBehaviour
     {
         if (hidingPhaseController != null)
         {
+            // enable only the selected hiding object
+            if (runningPhaseController != null && hidingObjectManager != null)
+            {
+                int selectedIndex = runningPhaseController.GetSelectedWallIndex();
+                hidingObjectManager.ShowSelectedObject(selectedIndex);
+                
+                Debug.Log($"Player selected hiding object {selectedIndex}");
+            }
+            
             hidingPhaseController.StartHiding();
             // hiding phase handles its own timer and completion
         }
@@ -259,34 +335,96 @@ public class GameStateManager : MonoBehaviour
 
     IEnumerator TransitionCoroutine()
     {
-        yield return new WaitForSeconds(transitionDelay);
+        // Determine which phase is coming next
+        GameState nextState = GameState.Running;
         
+        if (previousState == GameState.Running)
+        {
+            nextState = GameState.Hiding;
+        }
+        else if (previousState == GameState.QTE)
+        {
+            nextState = GameState.Running;
+        }
+        else if (previousState == GameState.Hiding)
+        {
+            nextState = GameState.QTE;
+        }
+        else if (previousState == GameState.Idle)
+        {
+            nextState = GameState.Running; // Game start goes to Running
+        }
+        
+        yield return new WaitForSeconds(preInstructionDelay);
+        
+        // show instruction panel based on next state
+        ShowInstructionPanel(nextState);
+        
+        yield return new WaitForSeconds(instructionDisplayTime);
+        
+        HideAllInstructionPanels();
+        
+        yield return new WaitForSeconds(postInstructionDelay);
+        
+        // transition to next state
         if (currentState == GameState.Transition)
         {
-            // Running → Hiding → QTE → Running
-            if (previousState == GameState.Running)
-            {
-                ChangeState(GameState.Hiding);
-            }
-            else if (previousState == GameState.QTE)
-            {
-                ChangeState(GameState.Running);
-            }
-            else if (previousState == GameState.Hiding)
-            {
-                ChangeState(GameState.QTE);
-            }
-            else
-            {
-                ChangeState(GameState.Running);
-            }
+            ChangeState(nextState);
         }
+    }
+    
+    void ShowInstructionPanel(GameState nextState)
+    {
+        HideAllInstructionPanels();
+        
+        switch (nextState)
+        {
+            case GameState.Running:
+                if (runningInstructionPanel != null)
+                {
+                    runningInstructionPanel.SetActive(true);
+                    Debug.Log("Showing Running instruction panel");
+                }
+                break;
+                
+            case GameState.Hiding:
+                if (hidingInstructionPanel != null)
+                {
+                    hidingInstructionPanel.SetActive(true);
+                    Debug.Log("Showing Hiding instruction panel");
+                }
+                break;
+                
+            case GameState.QTE:
+                if (qteInstructionPanel != null)
+                {
+                    qteInstructionPanel.SetActive(true);
+                    Debug.Log("Showing QTE instruction panel");
+                }
+                break;
+        }
+    }
+    
+    void HideAllInstructionPanels()
+    {
+        if (runningInstructionPanel != null)
+            runningInstructionPanel.SetActive(false);
+        if (hidingInstructionPanel != null)
+            hidingInstructionPanel.SetActive(false);
+        if (qteInstructionPanel != null)
+            qteInstructionPanel.SetActive(false);
     }
 
     void OnHidingSuccess()
     {
         Debug.Log("Hiding phase succeeded!");
         wallsCompleted++;
+        
+        // destroy objects for this round - fresh objects will be generated next round
+        if (hidingObjectManager != null)
+        {
+            hidingObjectManager.DestroyAllObjects();
+        }
         
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
@@ -296,9 +434,15 @@ public class GameStateManager : MonoBehaviour
     {
         LoseHeart();
         Debug.Log("Hiding phase failed! Retrying...");
+        
+        // destroy objects for this round - fresh objects will be generated next round
+        if (hidingObjectManager != null)
+        {
+            hidingObjectManager.DestroyAllObjects();
+        }
+        
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
-        // could implement lives/game over here
     }
 
     void IncreaseDifficulty()
@@ -312,40 +456,101 @@ public class GameStateManager : MonoBehaviour
 
     public void LoseHeart()
     {
+        Debug.Log("LOSE HEART called!");
         remainingHearts -= 1;
-        if (heartSprite.GetLabel() == "Three Hearts")
-        {
-            heartSprite.SetCategoryAndLabel("Hearts", "Two Hearts");
-        }
-        else if (heartSprite.GetLabel() == "Two Hearts")
-        {
-            heartSprite.SetCategoryAndLabel("Hearts", "One Heart");
-        }
-        else if (heartSprite.GetLabel() == "One Heart")
-        {
-            hearts.SetActive(false);
-            HandleGameOver(false);
-        }
+
+        // wait for animation and then update heart sprite!
+        StartCoroutine(WaitAndLoseHeart());
     }
 
-    void HandleGameOver(bool won)
+    private IEnumerator WaitAndLoseHeart()
     {
-        // currently no game over it is infinite whoops
-        Debug.Log(won ? "VICTORY!" : "GAME OVER!");
-        OnGameOver?.Invoke(won);
+        string currentLabel = heartSprite.GetLabel();
+        string newLabel = "";
 
-        if (!won)
+        // determine which heart sprite to change to
+        if (currentLabel == "Three Hearts")
         {
-            scientistLaugh.SetActive(true);
-            frankensteinAnimator.enabled = false;
-            DoorScript.StopScroll();
-            canvas.SetActive(false);
+            newLabel = "Two Hearts";
+        }
+        else if (currentLabel == "Two Hearts")
+        {
+            newLabel = "One Heart";
+        }
+        else if (currentLabel == "One Heart")
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                hearts.SetActive(false);
+                yield return new WaitForSeconds(0.2f);
+                hearts.SetActive(true);
+                yield return new WaitForSeconds(0.2f);
+            }
+            hearts.SetActive(false);
+            
+            ChangeState(GameState.GameOver);
+            yield break;
         }
 
-        if (wallSelectionUI != null)
+        // blink between current and new sprite 3 times
+        for (int i = 0; i < 3; i++)
         {
-            wallSelectionUI.SetVisible(false);
+            heartSprite.SetCategoryAndLabel("Hearts", newLabel);
+            yield return new WaitForSeconds(0.2f);
+            heartSprite.SetCategoryAndLabel("Hearts", currentLabel);
+            yield return new WaitForSeconds(0.2f);
         }
+
+        // set it to the new value permanently
+        Debug.Log($"Changing heart sprite to {newLabel}");
+        heartSprite.SetCategoryAndLabel("Hearts", newLabel);
+    }
+
+    public void ThrowAtPlayer(string obj)
+    {
+        bool dodgingRight = true;
+        switch(obj)
+        {
+            case "bottle":
+                dodgingRight = false;
+                break;
+            case "garlic":
+                dodgingRight = false;
+                break;
+            case "hammer":
+                break;
+            case "orange":
+                break;
+        }
+
+        if(dodgingRight) frankensteinAnimator.SetBool("DodgeRight", true);
+        else frankensteinAnimator.SetBool("DodgeRight", false);
+    }
+
+    void GoToStartMenu()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("StartingScene");
+    }
+
+    // animation events
+    public void AnimationWalkFail()
+    {
+        frankensteinAnimator.SetTrigger("walkFail");
+    }
+
+    public void AnimationWalkSuccess()
+    {
+        frankensteinAnimator.SetTrigger("walkSuccess");
+    }
+
+    public void AnimationDodgeFail()
+    {
+        frankensteinAnimator.SetTrigger("dodgeFail");
+    }
+
+    public void AnimationDodgeSuccess()
+    {
+        frankensteinAnimator.SetTrigger("dodgeSuccess");
     }
 
     // getters for UI
@@ -367,6 +572,11 @@ public class GameStateManager : MonoBehaviour
     public float GetCurrentDifficulty()
     {
         return currentDifficulty;
+    }
+
+    public float GetLives()
+    {
+        return remainingHearts;
     }
 
     // external methods
