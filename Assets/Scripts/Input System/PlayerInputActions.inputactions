@@ -97,6 +97,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Start",
+            "id": "276118d8-5fbf-4a8e-821c-acf4dcaed580",
+            "actions": [
+                {
+                    "name": "North Button",
+                    "type": "Button",
+                    "id": "a3e3dff1-78c5-4cc0-8ab4-3cdd0f54062f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "North Button (1)",
+                    "type": "Button",
+                    "id": "e51a7534-f3ea-49e8-a8f9-0967338b7988",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "52196806-fb11-426f-9179-a27f0b0caf94",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "North Button",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5c2c8ff3-51b7-4b0b-b487-362892fb0403",
+                    "path": "<XInputController>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "North Button (1)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

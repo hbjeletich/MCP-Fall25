@@ -283,6 +283,27 @@ public class InputManager : MonoBehaviour
         return result;
     }
 
+    public bool GetLimbStartButtonDown(LimbPlayer limb)
+    {
+        bool result = false;
+
+        if (inputMode == InputMode.Debug)
+        {
+            result = GetDebugStartButton(limb);
+        }
+        else
+        {
+            result = GetControllerStartButton(limb);
+        }
+
+        if (result && logAllButtonPresses)
+        {
+            Debug.Log($"[InputManager] Button pressed by: {limb} (Index {(int)limb})");
+        }
+
+        return result;
+    }
+
     private float GetDebugHorizontalAxis(LimbPlayer limb)
     {
         switch (limb)
@@ -319,6 +340,12 @@ public class InputManager : MonoBehaviour
             default:
                 return false;
         }
+    }
+
+    private bool GetDebugStartButton(LimbPlayer limb)
+    {
+        // For debug, use the same key for all limbs
+        return Input.GetKeyDown(KeyCode.Return);
     }
 
     private float GetControllerHorizontalAxis(LimbPlayer limb)
@@ -384,6 +411,44 @@ public class InputManager : MonoBehaviour
         return false;
     }
 
+    private bool GetControllerStartButton(LimbPlayer limb)
+    {
+        int playerIndex = (int)limb;
+
+        // Try PlayerInput first - this will use your Input Actions mapping
+        if (playerIndex < playerInputs.Length && playerInputs[playerIndex] != null)
+        {
+            try
+            {
+                var startAction = playerInputs[playerIndex].actions["Start"];
+                if (startAction != null && startAction.WasPressedThisFrame())
+                {
+                    if (logAllButtonPresses)
+                    {
+                        Debug.Log($"[InputManager] START button (Y/North) pressed via PlayerInput for {limb}");
+                    }
+                    return true;
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"Error reading Start action from PlayerInput: {e.Message}");
+            }
+        }
+
+        // Try device map with North button reading
+        if (deviceMap.ContainsKey(playerIndex) && deviceMap[playerIndex] != null)
+        {
+            bool pressed = ReadStartButtonFromDevice(deviceMap[playerIndex]);
+            if (pressed && logAllButtonPresses)
+            {
+                Debug.Log($"[InputManager] START button (Y/North) pressed on {deviceMap[playerIndex].displayName} for {limb}");
+            }
+            return pressed;
+        }
+
+        return false;
+    }
     private float ReadAxisFromDevice(InputDevice device)
     {
         try
@@ -463,6 +528,51 @@ public class InputManager : MonoBehaviour
 
         return false;
     }
+
+    // ADD this new method (place it after ReadButtonFromDevice around line 528):
+    private bool ReadStartButtonFromDevice(InputDevice device)
+    {
+        try
+        {
+            // Check if device is still valid
+            if (device == null || !device.added)
+            {
+                return false;
+            }
+
+            // Try gamepad - North button is Y on Xbox, Triangle on PlayStation
+            if (device is Gamepad gamepad)
+            {
+                // buttonNorth is the Y/Triangle button
+                return gamepad.buttonNorth.wasPressedThisFrame;
+            }
+
+            // Try joystick - look for the north/Y button
+            if (device is Joystick joystick)
+            {
+                // Common mappings for Y/Triangle button
+                string[] northButtonNames = { "button3", "button2", "buttonNorth", "y", "triangle" };
+
+                foreach (string buttonName in northButtonNames)
+                {
+                    if (joystick.TryGetChildControl<ButtonControl>(buttonName) is ButtonControl button)
+                    {
+                        if (button.wasPressedThisFrame)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Error reading start button from device: {e.Message}");
+        }
+
+        return false;
+    }
+
 
     public void SetInputMode(InputMode mode)
     {
