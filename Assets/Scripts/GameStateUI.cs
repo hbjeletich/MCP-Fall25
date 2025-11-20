@@ -24,6 +24,12 @@ public class GameStateUI : MonoBehaviour
     public GameObject gameOverPanel;
     public TextMeshProUGUI gameOverText;
     public Button restartButton;
+
+    [Header("Lose Heart")]
+    public GameObject poofObject;
+    public float poofTime = 2f;
+    public GameObject armAnim;
+    public float armAnimTime = 2f;
     
     void Start()
     {
@@ -31,6 +37,7 @@ public class GameStateUI : MonoBehaviour
         {
             gameStateManager.OnStateChange += OnStateChanged;
             gameStateManager.OnGameOver += OnGameOver;
+            gameStateManager.OnLoseHeart += OnLoseHeart;
         }
         
         if (restartButton != null)
@@ -42,6 +49,16 @@ public class GameStateUI : MonoBehaviour
         {
             gameOverPanel.SetActive(false);
         }
+
+        if(armAnim != null)
+        {
+            armAnim.SetActive(false);
+        }
+
+        if(poofObject != null)
+        {
+            poofObject.SetActive(false);
+        }
     }
 
     void OnDestroy()
@@ -50,6 +67,7 @@ public class GameStateUI : MonoBehaviour
         {
             gameStateManager.OnStateChange -= OnStateChanged;
             gameStateManager.OnGameOver -= OnGameOver;
+            gameStateManager.OnLoseHeart -= OnLoseHeart;
         }
     }
 
@@ -139,5 +157,20 @@ public class GameStateUI : MonoBehaviour
         {
             gameStateManager.RestartGame();
         }
+    }
+
+    void OnLoseHeart()
+    {
+        poofObject.SetActive(true);
+        StartCoroutine(TurnOffObject(poofObject, poofTime));
+
+        armAnim.SetActive(true);
+        StartCoroutine(TurnOffObject(armAnim, armAnimTime));
+    }
+
+    private IEnumerator TurnOffObject(GameObject obj, float time)
+    {
+        yield return new WaitForSeconds(time);
+        obj.SetActive(false);
     }
 }

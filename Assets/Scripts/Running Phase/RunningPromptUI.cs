@@ -17,12 +17,6 @@ public class RunningPromptUI : MonoBehaviour
     public Slider timerSlider;
     public TextMeshProUGUI limbLabel;
 
-    [Header("Colors")]
-    public Color idleColor = Color.gray;
-    public Color activeColor = Color.yellow;
-    public Color successColor = Color.green;
-    public Color missColor = Color.red;
-
     [Header("Debug")]
     public bool debugThisUI = true;
 
@@ -31,6 +25,12 @@ public class RunningPromptUI : MonoBehaviour
     private bool isActive = false;
     private float promptStartTime;
     private float promptEndTime;
+
+    private Sprite idleButtonSprite;
+    private Sprite waitingButtonSprite;
+    private Sprite successButtonSprite;
+    private Sprite missButtonSprite;
+    
 
     void Start()
     {
@@ -104,7 +104,6 @@ public class RunningPromptUI : MonoBehaviour
             }
             else
             {
-                // Show controller button (generic)
                 buttonText.text = "A";
             }
         }
@@ -178,24 +177,53 @@ public class RunningPromptUI : MonoBehaviour
     void SetActive()
     {
         if (promptPanel != null) promptPanel.SetActive(true);
-        if (buttonImage != null) buttonImage.color = activeColor;
+        if (buttonImage != null) buttonImage.sprite = idleButtonSprite;
         if (timerSlider != null) timerSlider.value = 0f;
     }
 
     void SetInactive()
     {
         if (promptPanel != null) promptPanel.SetActive(true);
-        if (buttonImage != null) buttonImage.color = idleColor;
+        if (buttonImage != null) buttonImage.sprite = idleButtonSprite;
         if (timerSlider != null) timerSlider.value = 0f;
     }
 
     void ShowSuccess()
     {
-        if (buttonImage != null) buttonImage.color = successColor;
+        if (buttonImage != null) buttonImage.sprite = successButtonSprite;
     }
 
     void ShowMiss()
     {
-        if (buttonImage != null) buttonImage.color = missColor;
+        if (buttonImage != null) buttonImage.sprite = missButtonSprite;
+    }
+
+    public void AssignButtonSprite(Sprite newSprite, string spriteType)
+    {
+        switch(spriteType)
+        {
+            case ("miss"):
+                missButtonSprite = newSprite;
+                break;
+            case("success"):
+                successButtonSprite = newSprite;
+                break;
+            case("wait"):
+                waitingButtonSprite = newSprite;
+                break;
+            case("idle"):
+                idleButtonSprite = newSprite;
+                break;
+        }
+
+        AssignAllSprites();
+    }
+
+    void AssignAllSprites()
+    {
+        if (buttonImage != null)
+        {
+            buttonImage.sprite = idleButtonSprite;
+        }
     }
 }

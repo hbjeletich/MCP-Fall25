@@ -63,6 +63,9 @@ public class GameStateManager : MonoBehaviour
     public delegate void OnGameOverEvent(bool won);
     public event OnGameOverEvent OnGameOver;
 
+    public delegate void OnLoseHeartEvent();
+    public event OnLoseHeartEvent OnLoseHeart;
+
     void Start()
     {
         if (hidingPhaseController != null)
@@ -458,6 +461,7 @@ public class GameStateManager : MonoBehaviour
     {
         Debug.Log("LOSE HEART called!");
         remainingHearts -= 1;
+        OnLoseHeart?.Invoke();
 
         // wait for animation and then update heart sprite!
         StartCoroutine(WaitAndLoseHeart());
