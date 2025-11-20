@@ -206,6 +206,7 @@ public class GameStateManager : MonoBehaviour
                 
             case GameState.Victory:
                 HandleGameOver(true);
+                Invoke("GoToStartMenu", 4f);
                 break;
         }
     }

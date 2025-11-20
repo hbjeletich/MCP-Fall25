@@ -30,6 +30,7 @@ public class GameStateUI : MonoBehaviour
     public float poofTime = 2f;
     public GameObject armAnim;
     public float armAnimTime = 2f;
+    public float moveAcrossAmount = -0.4f;
     
     void Start()
     {
@@ -161,16 +162,56 @@ public class GameStateUI : MonoBehaviour
 
     void OnLoseHeart()
     {
-        poofObject.SetActive(true);
-        StartCoroutine(TurnOffObject(poofObject, poofTime));
-
-        armAnim.SetActive(true);
-        StartCoroutine(TurnOffObject(armAnim, armAnimTime));
+        if (poofObject == null || armAnim == null) return;
+        AudioManager.Instance.PlayGiggle();;
+        StartCoroutine(LoseHeartSequence());
     }
 
-    private IEnumerator TurnOffObject(GameObject obj, float time)
+    private IEnumerator LoseHeartSequence()
     {
-        yield return new WaitForSeconds(time);
-        obj.SetActive(false);
+        // show poof immediately
+        poofObject.SetActive(true);
+
+        // move arm before it appears
+        var pos = armAnim.transform.position;
+        armAnim.transform.position = new Vector3(pos.x - moveAcrossAmount, pos.y, pos.z);
+
+        // after 0.3s, show arm
+        yield return new WaitForSeconds(0.3f);
+        armAnim.SetActive(true);
+
+        // at total 1.0s from start, hide poof (we've already waited 0.3s, so wait the remainder)
+        float untilPoofOff = 1f - 0.3f; // 0.7f
+        if (untilPoofOff > 0f)
+            yield return new WaitForSeconds(untilPoofOff);
+        poofObject.SetActive(false);
+
+        // compute remaining time until arm should finish
+        float timeUntilArmEnd = (0.3f + armAnimTime) - 1f; // arm end time minus current time (1s)
+        if (timeUntilArmEnd <= 0f)
+        {
+            // arm duration already elapsed (or ends now)
+            armAnim.SetActive(false);
+            yield break;
+        }
+
+        // about 0.2s before arm ends, bring back the poof for a short disguise
+        if (timeUntilArmEnd > 0.2f)
+        {
+            yield return new WaitForSeconds(timeUntilArmEnd - 0.2f);
+            poofObject.SetActive(true);
+            yield return new WaitForSeconds(0.2f);
+            poofObject.SetActive(false);
+        }
+        else
+        {
+            // not enough time to wait; show poof for the remaining time
+            poofObject.SetActive(true);
+            yield return new WaitForSeconds(timeUntilArmEnd);
+            poofObject.SetActive(false);
+        }
+
+        // finally hide the arm
+        armAnim.SetActive(false);
     }
 }

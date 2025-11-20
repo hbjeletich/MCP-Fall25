@@ -144,7 +144,7 @@ public class ScientistAudioController : MonoBehaviour
         }
     }
     
-    private void PlayRandomGiggle()
+    public void PlayRandomGiggle()
     {
         if (giggleSource != null && giggleClips.Length > 0)
         {

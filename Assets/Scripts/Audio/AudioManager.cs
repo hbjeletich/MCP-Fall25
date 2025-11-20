@@ -223,4 +223,12 @@ public class AudioManager : MonoBehaviour
             scientistAudioController.PlayThrowing();
         }
     }
+
+    public void PlayGiggle()
+    {
+        if (scientistAudioController != null)
+        {
+            scientistAudioController.PlayRandomGiggle();
+        }
+    }
 }
