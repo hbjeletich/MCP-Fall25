@@ -3155,9 +3155,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3641580366413220556, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -5820488877509005799, guid: 78746e897624b19439a398476df8f336, type: 3}
     - target: {fileID: 7024235104823847630, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_Name
       value: Frankenstein Body
+      objectReference: {fileID: 0}
+    - target: {fileID: 7136132647289083722, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6895783187873776210, guid: 78746e897624b19439a398476df8f336, type: 3}
+    - target: {fileID: 7943364322913414735, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
+      propertyPath: m_SpriteHash
+      value: 776600624
       objectReference: {fileID: 0}
     - target: {fileID: 8192893557834642093, guid: 59500541681ca3e4589ff860d70b5d30, type: 3}
       propertyPath: m_LocalPosition.x
