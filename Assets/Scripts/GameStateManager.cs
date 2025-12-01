@@ -45,6 +45,7 @@ public class GameStateManager : MonoBehaviour
     private int wallsCompleted = 0;
     private float currentDifficulty = 1f;
     private HidingObject[] currentHidingObjects;
+    private int sprintNumber = 0;
     
     public enum GameState
     {
@@ -90,6 +91,7 @@ public class GameStateManager : MonoBehaviour
         // FOR NOW auto start
         StartGame();
         remainingHearts = 3;
+        sprintNumber = 0;
     }
 
     void OnDestroy()
@@ -220,6 +222,9 @@ public class GameStateManager : MonoBehaviour
         Instantiate(scientistLaugh, new Vector3(0, 0, 0), Quaternion.identity);
         canvas.SetActive(false);
 
+        // add sprint number to final score display?
+        Debug.Log($"Final sprint number: {sprintNumber}");
+
         Invoke("GoToStartMenu", 4f);
     }
 
@@ -319,6 +324,10 @@ public class GameStateManager : MonoBehaviour
     void OnQTESuccess()
     {
         Debug.Log("QTE Success!");
+
+        // increase sprint number here
+        IncreaseSprintNumber();
+
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
     }
@@ -582,6 +591,16 @@ public class GameStateManager : MonoBehaviour
     public float GetLives()
     {
         return remainingHearts;
+    }
+
+    public void IncreaseSprintNumber()
+    {
+        sprintNumber++;
+    }
+
+    public int GetSprintNumber()
+    {
+        return sprintNumber;
     }
 
     // external methods

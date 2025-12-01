@@ -906,7 +906,7 @@ MonoBehaviour:
   hallwayRunVolume: 0.2
   giggleVolume: 0.5
   creepyLaughVolume: 0.5
-  throwingVolume: 0.6
+  throwingVolume: 0.8
   minGiggleInterval: 3
   maxGiggleInterval: 8
 --- !u!1 &242570799
