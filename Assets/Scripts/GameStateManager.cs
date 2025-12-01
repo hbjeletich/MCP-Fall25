@@ -325,7 +325,7 @@ public class GameStateManager : MonoBehaviour
 
     void OnQTEFail(List<int> missedPlayers)
     {
-        Debug.Log($"QTE Failed! {missedPlayers.Count} player(s) missed. Retrying...");
+        Debug.Log($"QTE Failed! {missedPlayers.Count} player(s) missed.");
         LoseHeart();
 
         foreach (int playerIndex in missedPlayers)

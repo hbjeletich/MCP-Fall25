@@ -205,7 +205,7 @@ public class QTEController : MonoBehaviour
         {
             // FAIL - ALL PLAYERS PRESSED, BUT NOT SYNCHRONIZED ENOUGH
             Debug.Log("QTE: FAILED! Presses not synchronized.");
-            gameManager.LoseHeart();
+            //gameManager.LoseHeart();
 
             // ADDS WHOEVER WAS OUT OF SYNC TO MISSED PLAYERS LIST
             for (int i = 0; i < 5; i++)
