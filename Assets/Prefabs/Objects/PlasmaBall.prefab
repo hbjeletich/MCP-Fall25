@@ -101,7 +101,7 @@ MonoBehaviour:
   safeZoneCollider: {fileID: 0}
   safeZoneOffset: {x: 0, y: -2.93, z: 0}
   pixelCheckStep: 3
-  requiredInsidePercentage: 70
+  requiredInsidePercentage: 55
   showDetailedDebug: 0
 --- !u!60 &3964221415916678398
 PolygonCollider2D:
