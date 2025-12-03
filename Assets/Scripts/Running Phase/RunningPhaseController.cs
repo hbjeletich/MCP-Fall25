@@ -174,6 +174,7 @@ public class RunningPhaseController : MonoBehaviour
 
     void ShowNextPrompt()
     {
+        PlayerStatsManager.Instance.RecordRunningPrompt(currentPatternIndex);
         currentPromptLimb = limbPattern[currentPatternIndex];
         currentPromptStartTime = Time.time;
 
@@ -204,6 +205,8 @@ public class RunningPhaseController : MonoBehaviour
 
     void HandleSuccessfulInput(float accuracy)
     {
+        PlayerStatsManager.Instance.RecordRunningHit(currentPatternIndex, accuracy);
+
         AudioManager.Instance.PlaySuccess();
 
         Debug.Log($"{currentPromptLimb} pressed! Accuracy: {accuracy:F2}");
@@ -219,6 +222,8 @@ public class RunningPhaseController : MonoBehaviour
 
     void HandleMissedPrompt()
     {
+        PlayerStatsManager.Instance.RecordRunningMiss(currentPatternIndex);
+
         AudioManager.Instance.PlayFail();
 
         Debug.Log($"{currentPromptLimb} MISSED!");

@@ -199,6 +199,9 @@ public class HidingPhaseController : MonoBehaviour
         {
             AudioManager.Instance.PlaySuccess();
             Debug.Log("Successfully hid!");
+
+            PlayerStatsManager.Instance.RecordHidingSuccess();
+
             OnHidingSuccess?.Invoke();
             currentObjectIndex++;
 
@@ -208,6 +211,9 @@ public class HidingPhaseController : MonoBehaviour
         {
             AudioManager.Instance.PlayFail();
             Debug.Log("Failed to hide! Retrying...");
+            
+            PlayerStatsManager.Instance.RecordHidingFail();
+
             OnHidingFail?.Invoke();
 
             ResetLimbs();

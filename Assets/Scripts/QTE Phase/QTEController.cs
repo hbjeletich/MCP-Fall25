@@ -122,6 +122,20 @@ public class QTEController : MonoBehaviour
                 continue;
             }
 
+            float deviation = 0f;
+            if (pressCount > 1)
+            {
+                float earliest = buttonPressTimes[i];
+                for (int j = 0; j < 5; j++)
+                {
+                    if (hasPressed[j] && buttonPressTimes[j] < earliest)
+                        earliest = buttonPressTimes[j];
+                }
+                deviation = Mathf.Abs(buttonPressTimes[i] - earliest);
+            }
+
+            PlayerStatsManager.Instance.RecordQTEPress(i, deviation);
+
             InputManager.LimbPlayer limb = (InputManager.LimbPlayer)i;
             if (inputManager.GetLimbLockButtonDown(limb))
             {
@@ -159,6 +173,8 @@ public class QTEController : MonoBehaviour
                     missedPlayers.Add(i);
                     OnPlayerMiss?.Invoke(i);
                     Debug.Log($"QTE: Player {i} ({(InputManager.LimbPlayer)i}) MISSED!");
+
+                    PlayerStatsManager.Instance.RecordQTEMiss(i);
                 }
             }
             // TIMES OUT OF QUICK TIME EVENT (FAIL STATE) (?)
@@ -213,6 +229,8 @@ public class QTEController : MonoBehaviour
                 if (hasPressed[i])
                 {
                     float deviation = Mathf.Abs(buttonPressTimes[i] - firstPressTime);
+                    PlayerStatsManager.Instance.RecordQTEPress(i, deviation);
+
                     if (deviation > syncWindow)
                     {
                         missedPlayers.Add(i);

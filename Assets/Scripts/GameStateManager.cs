@@ -21,6 +21,8 @@ public class GameStateManager : MonoBehaviour
     [Header("Difficulty")]
     public bool increaseDifficulty = true;
     public float difficultyMultiplier = 1.1f;
+    public float speedIncreasePerLevel = 0.05f;
+    public float speedCap = 2.5f;
 
     [Header("Lives")]
     public GameObject hearts;
@@ -29,8 +31,11 @@ public class GameStateManager : MonoBehaviour
 
     [Header("Animation")]
     public GameObject scientistLaugh;
-    public GameObject canvas;
+    //public GameObject canvas;
     public Animator frankensteinAnimator;
+    
+    [Header("Sprint Stats")]
+    public SprintStatsScreen sprintStatsScreen;
     
     [Header("Instruction Panels")]
     public GameObject runningInstructionPanel;
@@ -69,6 +74,8 @@ public class GameStateManager : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1f; // ensure time scale is normal
+
         if (hidingPhaseController != null)
         {
             hidingPhaseController.OnHidingSuccess += OnHidingSuccess;
@@ -129,6 +136,13 @@ public class GameStateManager : MonoBehaviour
         previousState = currentState;
         currentState = newState;
         Debug.Log($"State changed to: {newState}");
+
+        if(previousState == GameState.QTE && newState == GameState.Running)
+        {
+            IncreaseSprintNumber();
+            IncreaseTimeSpeed();
+            Debug.Log($"Sprint number increased to: {sprintNumber}");
+        }
         
         OnStateChange?.Invoke(newState);
         
@@ -220,16 +234,37 @@ public class GameStateManager : MonoBehaviour
         DoorScript.StopScroll();
         
         Instantiate(scientistLaugh, new Vector3(0, 0, 0), Quaternion.identity);
-        canvas.SetActive(false);
+        //canvas.SetActive(false);
 
-        // add sprint number to final score display?
+        // Save high score
+        SaveHighScore();
         Debug.Log($"Final sprint number: {sprintNumber}");
 
-        Invoke("GoToStartMenu", 4f);
+        // Show sprint stats screen after scientist laugh animation
+        Invoke("ShowSprintStats", 2f);
+    }
+    
+    void ShowSprintStats()
+    {
+        if (sprintStatsScreen != null)
+        {
+            int currentSprint = GetSprintNumber();
+            int highestSprint = GetHighestSprint();
+            
+            sprintStatsScreen.ShowStats(currentSprint, highestSprint);
+            
+            Debug.Log($"Showing sprint stats: Current={currentSprint}, High={highestSprint}");
+        }
+        else
+        {
+            Debug.LogWarning("SprintStatsScreen not assigned! Going to menu...");
+            GoToStartMenu();
+        }
     }
 
     void HandleGameOver(bool won)
     {
+        Time.timeScale = 1f; // ensure time scale is normal
         Debug.Log(won ? "VICTORY!" : "GAME OVER!");
         OnGameOver?.Invoke(won);
 
@@ -325,8 +360,8 @@ public class GameStateManager : MonoBehaviour
     {
         Debug.Log("QTE Success!");
 
-        // increase sprint number here
-        IncreaseSprintNumber();
+        // // increase sprint number here
+        // IncreaseSprintNumber();
 
         IncreaseDifficulty();
         ChangeState(GameState.Transition);
@@ -348,7 +383,7 @@ public class GameStateManager : MonoBehaviour
 
     IEnumerator TransitionCoroutine()
     {
-        // Determine which phase is coming next
+        // determine which phase is coming next
         GameState nextState = GameState.Running;
         
         if (previousState == GameState.Running)
@@ -365,7 +400,7 @@ public class GameStateManager : MonoBehaviour
         }
         else if (previousState == GameState.Idle)
         {
-            nextState = GameState.Running; // Game start goes to Running
+            nextState = GameState.Running; // game start goes to Running
         }
         
         yield return new WaitForSeconds(preInstructionDelay);
@@ -601,6 +636,37 @@ public class GameStateManager : MonoBehaviour
     public int GetSprintNumber()
     {
         return sprintNumber;
+    }
+    
+    public int GetHighestSprint()
+    {
+        return PlayerPrefs.GetInt("HighestSprint", 0);
+    }
+    
+    public void SaveHighScore()
+    {
+        int currentSprint = GetSprintNumber();
+        int highestSprint = GetHighestSprint();
+        
+        if (currentSprint > highestSprint)
+        {
+            PlayerPrefs.SetInt("HighestSprint", currentSprint);
+            PlayerPrefs.Save();
+            Debug.Log($"New high score! Sprint {currentSprint}");
+        }
+    }
+
+    void IncreaseTimeSpeed()
+    {
+        if( Time.timeScale >= speedCap)
+        {
+            Debug.Log("Time speed is at or above cap; not increasing further.");
+            return;
+        }
+        
+        Time.timeScale += speedIncreasePerLevel;
+
+        Debug.Log($"Increased time speed to: {Time.timeScale}");
     }
 
     // external methods
