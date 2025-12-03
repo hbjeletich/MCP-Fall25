@@ -136,13 +136,6 @@ public class GameStateManager : MonoBehaviour
         previousState = currentState;
         currentState = newState;
         Debug.Log($"State changed to: {newState}");
-
-        if(previousState == GameState.QTE && newState == GameState.Running)
-        {
-            IncreaseSprintNumber();
-            IncreaseTimeSpeed();
-            Debug.Log($"Sprint number increased to: {sprintNumber}");
-        }
         
         OnStateChange?.Invoke(newState);
         
@@ -181,8 +174,12 @@ public class GameStateManager : MonoBehaviour
                     frankensteinAnimator.enabled = true;
                 }
                 break;
-            // case GameState.QTE:
-            //     // nothing special
+            case GameState.QTE:
+                IncreaseSprintNumber();
+                IncreaseTimeSpeed();
+                Debug.Log($"Sprint number increased to: {sprintNumber}");
+                break;
+            
         }
     }
 

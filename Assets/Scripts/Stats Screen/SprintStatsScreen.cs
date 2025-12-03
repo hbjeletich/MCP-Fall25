@@ -250,7 +250,7 @@ public class SprintStatsScreen : MonoBehaviour
             line.transform.localScale = Vector3.zero;
 
             TextMeshProUGUI tmp = line.GetComponent<TextMeshProUGUI>();
-            int percent = Mathf.RoundToInt(entry.value * 100f);
+            int percent = Mathf.RoundToInt(entry.value);
             tmp.text = $"{entry.name}: {percent}%";
 
             Vector3 targetScale = Vector3.one;
